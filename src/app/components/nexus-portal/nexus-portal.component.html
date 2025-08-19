@@ -1,0 +1,88 @@
+<div class="container-fluid">
+    <div class="card main">
+        <div class="row">
+            <div class="col-sm-3 col-12">
+
+                <div class="card individual">
+                    
+                    <div class="card-title"><b>Add Individual</b></div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            Family
+                        </div>
+                        <div class="col-6">
+                            <select class="drop-fam" id="drop-fam" (change)="GetChosenFamily()">
+                                <ng-container *ngFor="let family of families">
+                                    <option>{{ family }}</option>
+                                </ng-container>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            First Name
+                        </div>
+                        <div class="col-6">
+                            <input type="text" [(ngModel)]="firstName">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            Last Name
+                        </div>
+                        <div class="col-6">
+                            <input type="text" [(ngModel)]="lastName">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            Location
+                        </div>
+                        <div class="col-6">
+                            <select class="drop-loc" id="drop-loc" (change)="GetChosenLocation()">
+                                <ng-container *ngFor="let location of locations">
+                                    <option>{{ location }}</option>
+                                </ng-container>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            Phone Number
+                        </div>
+                        <div class="col-6">
+                            <select class="drop-pho" id="drop-pho" (change)="GetChosenPhoneNumber()">
+                                <ng-container *ngFor="let phoneNumber of phoneNumbers">
+                                    <option>{{ phoneNumber }}</option>
+                                </ng-container>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            Description
+                        </div>
+                        <div class="col-6">
+                            <textarea [(ngModel)]="description" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row individual-buttons">
+                        <div class="col-6">
+                            <button (click)="Save()">Save</button>
+                        </div>
+                        <div class="col-6">
+                            <button>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
