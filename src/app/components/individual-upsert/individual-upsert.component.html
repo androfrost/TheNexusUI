@@ -1,0 +1,82 @@
+<div class="card individual">
+                    
+    <div class="card-title"><b>Add Individual</b></div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            Family
+        </div>
+        <div class="col-12 col-sm-6">
+            <select class="drop-fam" id="drop-fam" (change)="GetChosenFamily()">
+                <ng-container *ngFor="let family of families">
+                    <option>{{ family }}</option>
+                </ng-container>
+            </select>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            First Name
+        </div>
+        <div class="col-12 col-sm-6">
+            <input type="text" [(ngModel)]="firstName">
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            Last Name
+        </div>
+        <div class="col-12 col-sm-6">
+            <input type="text" [(ngModel)]="lastName">
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            Location
+        </div>
+        <div class="col-12 col-sm-6">
+            <select class="drop-loc" id="drop-loc" (change)="GetChosenLocation()">
+                <ng-container *ngFor="let location of locations">
+                    <option>{{ location }}</option>
+                </ng-container>
+            </select>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            Phone Number
+        </div>
+        <div class="col-12 col-sm-6">
+            <select class="drop-pho" id="drop-pho" (change)="GetChosenPhoneNumber()">
+                <ng-container *ngFor="let phoneNumber of phoneNumbers">
+                    <option>{{ phoneNumber }}</option>
+                </ng-container>
+            </select>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            Description
+        </div>
+        <div class="col-12 col-sm-6">
+            <textarea [(ngModel)]="description" rows="3"></textarea>
+        </div>
+    </div>
+    <hr>
+    <div class="row individual-buttons">
+        <div class="col-4">
+            <button (click)="Save()">Save</button>
+        </div>
+        <div class="col-4">
+            <button (click)="Reset()">Reset</button>
+        </div>
+        <div class="col-4">
+            <button (click)="Cancel()">Cancel</button>
+        </div>
+    </div>
+</div>

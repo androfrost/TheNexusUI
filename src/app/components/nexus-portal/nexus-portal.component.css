@@ -1,3 +1,10 @@
+
+
+.main{
+    border-width: 0px;
+}
+
+ /* Nexus Add Individual CSS */
 input{
     width: 100%;
 }
@@ -8,22 +15,6 @@ select{
 
 button{
     width: 100%;
-}
-
-.main{
-    border-width: 0px;
-}
-
-.individual{
-    border-width: 3px;
-    border-color: rgb(155, 198, 212);
-    border-style: solid;
-    margin: 3px;
-    background-color: rgb(225, 224, 224);
-    max-height: 74opx;
-    max-width: 360px;
-    overflow-y: none;
-    padding: 5px;
 }
 
 textarea{
