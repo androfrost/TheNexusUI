@@ -15,7 +15,7 @@ export class IndividualUpsertComponent {
   @Input() upsertIndividual: Individual = new Individual();
   @Input() entrancePortal: number = 0;
   
-  @Output() returnToPreviousPortal = new EventEmitter<number>();
+  @Output() goToNextPortal = new EventEmitter<number>();
 
   families: string[] =  ["Choose Family","Mouse", "Duck","Fredrickson"];
   familyOption: number = 0;
@@ -50,7 +50,7 @@ export class IndividualUpsertComponent {
 
   Cancel(){
     this.Reset();
-    this.returnToPreviousPortal.emit(this.entrancePortal);
+    this.goToNextPortal.emit(this.entrancePortal);
   }
   
   GetChosenLocation() : void{

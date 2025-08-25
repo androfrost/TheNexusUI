@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-//import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { IndividualUpsertComponent } from "../individual-upsert/individual-upsert.component";
-//import { NgSelectModule } from '@ng-select/ng-select';
 import { portal } from '../../enum/portal';
+import { MainMenuComponent } from "../main-menu/main-menu.component";
 
 @Component({
   selector: 'app-nexus-portal',
   standalone: true,
-  imports: [CommonModule, FormsModule, IndividualUpsertComponent],
+  imports: [CommonModule, FormsModule, IndividualUpsertComponent, MainMenuComponent],
   templateUrl: './nexus-portal.component.html',
   styleUrl: './nexus-portal.component.css'
 })
 export class NexusPortalComponent {
+  portal = portal;
   portalState: number = 0;
   newPortalState: number = portal.IndividualUpsert;
   private intervalId: any;
