@@ -1,2 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import "~@ng-select/ng-select/themes/default.theme.css"; */
+
+input{
+    width: 100%;
+}
+
+select{
+    width: 100%;
+}
+
+button{
+    width: 100%;
+}
+
+textarea{
+    resize: none;
+    width: 100%;
+}
+
+.portal{
+    border-width: 3px;
+    border-color: rgb(155, 198, 212);
+    border-style: solid;
+    margin: 3px;
+    background-color: rgb(202, 198, 198);
+    max-height: 740px;
+    max-width: 500px;
+    overflow-y: none;
+    padding: 5px;
+}
