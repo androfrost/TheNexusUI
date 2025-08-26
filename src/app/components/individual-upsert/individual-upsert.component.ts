@@ -21,11 +21,18 @@ export class IndividualUpsertComponent {
   familyOption: number = 0;
   firstName: string = this.upsertIndividual.firstName;
   lastName: string = this.upsertIndividual.lastName;
+  types: string[] =  ["Choose Type","Person", "Animal"];
+  typeOption: number = 0;
+  sexes: string[] =  ["Choose Sex","Male", "Female"];
+  sexOption: number = 0;
+  dateOfBirth: Date = this.upsertIndividual.dateOfBirth;
   locations: string[] =  ["Choose Address","123 Fake Street", "321 Real Street","2828 Squarehill Dr"];
   locationOption: number = 0;
   phoneNumbers: string[] =  ["Choose Phone Number","123-456-7890"];
   phoneNumberOption: number = 0;
   description: string = this.upsertIndividual.description;
+  statuses: string[] =  ["Choose Status","Active", "Inactive", "Deceased"];
+  statusOption: number = 1;
 
   Save(){
     this.upsertIndividual.firstName = this.firstName;
@@ -39,28 +46,55 @@ export class IndividualUpsertComponent {
   Reset(){
     this.firstName = "";
     this.lastName = "";
+    this.typeOption = 0;
+    this.SetChosenType(this.typeOption);
+    this.sexOption = 0;
+    this.SetChosenSex(this.sexOption);
+    this.dateOfBirth = new Date();
     this.familyOption = 0;
-    this.SetChosenFamily();
+    this.SetChosenFamily(this.familyOption);
     this.locationOption = 0;
-    this.SetChosenLocation();
+    this.SetChosenLocation(this.locationOption);
     this.phoneNumberOption = 0;
-    this.SetChosenPhoneNumber();
-    this.description = "";  
+    this.SetChosenPhoneNumber(this.phoneNumberOption);
+    this.description = "";
+    this.statusOption = 1;
+    this.SetChosenStatus(this.statusOption);
   }
 
   Cancel(){
     this.Reset();
     this.goToNextPortal.emit(this.entrancePortal);
   }
+
+  GetChosenType() : void{
+    let chosenType = document.getElementById("drop-typ") as HTMLSelectElement;
+    this.sexOption = chosenType.selectedIndex;
+  }
+
+  SetChosenType(typeId: number) : void{
+    let chosenType = document.getElementById("drop-typ") as HTMLSelectElement;
+    chosenType.selectedIndex = typeId;
+  }
   
+  GetChosenSex() : void{
+    let chosenSex = document.getElementById("drop-sex") as HTMLSelectElement;
+    this.sexOption = chosenSex.selectedIndex;
+  }
+
+  SetChosenSex(typeId: number) : void{
+    let chosenSex = document.getElementById("drop-sex") as HTMLSelectElement;
+    chosenSex.selectedIndex = typeId;
+  }
+
   GetChosenLocation() : void{
     let chosenLocation = document.getElementById("drop-loc") as HTMLSelectElement;
     this.locationOption = chosenLocation.selectedIndex;
   }
 
-  SetChosenLocation() : void{
+  SetChosenLocation(typeId: number) : void{
     let chosenLocation = document.getElementById("drop-loc") as HTMLSelectElement;
-    chosenLocation.selectedIndex = 0;
+    chosenLocation.selectedIndex = typeId;
   }
 
   GetChosenFamily() : void{
@@ -68,9 +102,9 @@ export class IndividualUpsertComponent {
     this.familyOption = chosenFamily.selectedIndex;
   }
 
-  SetChosenFamily() : void{
+  SetChosenFamily(typeId: number) : void{
     let chosenFamily = document.getElementById("drop-fam") as HTMLSelectElement;
-    chosenFamily.selectedIndex = 0;
+    chosenFamily.selectedIndex = typeId;
   }
 
   GetChosenPhoneNumber() : void{
@@ -78,8 +112,18 @@ export class IndividualUpsertComponent {
     this.phoneNumberOption = chosenPhoneNumber.selectedIndex;
   }
 
-  SetChosenPhoneNumber() : void{
+  SetChosenPhoneNumber(typeId: number) : void{
     let chosenPhoneNumber = document.getElementById("drop-pho") as HTMLSelectElement;
-    chosenPhoneNumber.selectedIndex = 0;
+    chosenPhoneNumber.selectedIndex = typeId;
+  }
+
+  GetChosenStatus() : void{
+    let chosenStatus = document.getElementById("drop-sta") as HTMLSelectElement;
+    this.statusOption = chosenStatus.selectedIndex;
+  }
+
+  SetChosenStatus(typeId: number) : void{
+    let chosenStatus = document.getElementById("drop-sta") as HTMLSelectElement;
+    chosenStatus.selectedIndex = typeId;
   }
 }

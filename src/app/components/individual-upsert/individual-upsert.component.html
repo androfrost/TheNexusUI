@@ -7,10 +7,19 @@
             Family
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-fam" id="drop-fam" (change)="GetChosenFamily()">
-                <ng-container *ngFor="let family of families">
-                    <option>{{ family }}</option>
-                </ng-container>
+            <select class="drop-fam" id="drop-fam" (change)="GetChosenFamily()" [(ngModel)]="familyOption">
+                <option *ngFor="let family of families; let i = index" [value]="i">{{ family }}</option>
+            </select>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            Type
+        </div>
+        <div class="col-12 col-sm-6">
+            <select class="drop-typ" id="drop-typ" (change)="GetChosenType()" [(ngModel)]="typeOption">
+                <option *ngFor="let type of types; let i = index" [value]="i">{{ type }}</option>
             </select>
         </div>
     </div>
@@ -35,13 +44,31 @@
     <hr>
     <div class="row">
         <div class="col-12 col-sm-6">
+            Sex
+        </div>
+        <div class="col-12 col-sm-6">
+            <select class="drop-sex" id="drop-sex" (change)="GetChosenSex()" [(ngModel)]="sexOption">
+                <option *ngFor="let sex of sexes; let i = index" [value]="i">{{ sex }}</option>
+            </select>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            Date of birth
+        </div>
+        <div class="col-12 col-sm-6">
+            <input type="date" [(ngModel)]="dateOfBirth">
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
             Location
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-loc" id="drop-loc" (change)="GetChosenLocation()">
-                <ng-container *ngFor="let location of locations">
-                    <option>{{ location }}</option>
-                </ng-container>
+            <select class="drop-loc" id="drop-loc" (change)="GetChosenLocation()" [(ngModel)]="locationOption">
+                <option *ngFor="let location of locations; let i = index" [value]="i">{{ location }}</option>
             </select>
         </div>
     </div>
@@ -51,10 +78,8 @@
             Phone Number
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-pho" id="drop-pho" (change)="GetChosenPhoneNumber()">
-                <ng-container *ngFor="let phoneNumber of phoneNumbers">
-                    <option>{{ phoneNumber }}</option>
-                </ng-container>
+            <select class="drop-pho" id="drop-pho" (change)="GetChosenPhoneNumber()" [(ngModel)]="phoneNumberOption">
+                <option *ngFor="let phoneNumber of phoneNumbers; let i = index" [value]="i">{{ phoneNumber }}</option>
             </select>
         </div>
     </div>
@@ -68,6 +93,18 @@
         </div>
     </div>
     <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            Status
+        </div>
+        <div class="col-12 col-sm-6">
+            <select class="drop-sta" id="drop-sta" (change)="GetChosenStatus()" [(ngModel)]="statusOption">
+                <option *ngFor="let status of statuses; let i = index" [value]="i">{{ status }}</option>
+            </select>
+        </div>
+    </div>
+    <hr>
+
     <div class="row individual-buttons">
         <div class="col-4">
             <button (click)="Save()">Save</button>
