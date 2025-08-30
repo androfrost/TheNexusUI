@@ -18,8 +18,8 @@
             Type
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-typ" id="drop-typ" (change)="GetChosenType()" [(ngModel)]="typeOption">
-                <option *ngFor="let type of types; let i = index" [value]="i">{{ type }}</option>
+            <select class="drop-typ" id="drop-typ" (change)="GetChosenType()" [(ngModel)]="individualTypeOption">
+                <option *ngFor="let type of individualTypes; let i = index" [value]="i">{{ type }}</option>
             </select>
         </div>
     </div>
@@ -105,15 +105,18 @@
     </div>
     <hr>
 
-    <div class="row individual-buttons">
-        <div class="col-4">
-            <button (click)="Save()">Save</button>
-        </div>
-        <div class="col-4">
-            <button (click)="Reset()">Reset</button>
-        </div>
-        <div class="col-4">
-            <button (click)="Cancel()">Cancel</button>
+    <div>
+        <div class="row individual-buttons"> 
+             <!-- bottom-docked-buttons"> -->
+            <div class="col-4">
+                <button (click)="Save()">Save</button>
+            </div>
+            <div class="col-4">
+                <button (click)="Reset()">Reset</button>
+            </div>
+            <div class="col-4">
+                <button (click)="Cancel()">Cancel</button>
+            </div>
         </div>
     </div>
 </div>

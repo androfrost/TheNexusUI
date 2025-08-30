@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Individual } from '../../models/individual';
+import { status } from '../../enum/status';
 
 @Component({
   selector: 'app-individual-upsert',
@@ -12,6 +13,8 @@ import { Individual } from '../../models/individual';
 })
 export class IndividualUpsertComponent {
 
+  status = status;
+
   @Input() upsertIndividual: Individual = new Individual();
   @Input() entrancePortal: number = 0;
   
@@ -21,8 +24,8 @@ export class IndividualUpsertComponent {
   familyOption: number = 0;
   firstName: string = this.upsertIndividual.firstName;
   lastName: string = this.upsertIndividual.lastName;
-  types: string[] =  ["Choose Type","Person", "Animal"];
-  typeOption: number = 0;
+  individualTypes: string[] =  ["Choose Type","Person", "Animal"];
+  individualTypeOption: number = this.upsertIndividual.sexId ;
   sexes: string[] =  ["Choose Sex","Male", "Female"];
   sexOption: number = 0;
   dateOfBirth: Date = this.upsertIndividual.dateOfBirth;
@@ -31,23 +34,26 @@ export class IndividualUpsertComponent {
   phoneNumbers: string[] =  ["Choose Phone Number","123-456-7890"];
   phoneNumberOption: number = 0;
   description: string = this.upsertIndividual.description;
-  statuses: string[] =  ["Choose Status","Active", "Inactive", "Deceased"];
-  statusOption: number = 1;
+  statuses: string[] =  ["Active", "Inactive", "Deceased"];
+  statusOption: number = this.upsertIndividual.statusId;
 
   Save(){
     this.upsertIndividual.firstName = this.firstName;
     this.upsertIndividual.lastName = this.lastName;
     this.upsertIndividual.description = this.description;
+    this.upsertIndividual.statusId = this.statusOption;
 
     console.log(this.upsertIndividual.firstName+ " " +this.upsertIndividual.lastName);
     console.log(this.upsertIndividual.description);
+
+
   }
 
   Reset(){
     this.firstName = "";
     this.lastName = "";
-    this.typeOption = 0;
-    this.SetChosenType(this.typeOption);
+    this.individualTypeOption = 0;
+    this.SetChosenType(this.individualTypeOption);
     this.sexOption = 0;
     this.SetChosenSex(this.sexOption);
     this.dateOfBirth = new Date();
