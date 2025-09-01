@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NexusPortalComponent } from './components/nexus-portal/nexus-portal.component';
 import { IndividualUpsertComponent } from './components/individual-upsert/individual-upsert.component';
+import { FamilyUpsertComponent } from './components/family-upsert/family-upsert.component';
 
 export const routes: Routes = [
   {
@@ -10,6 +11,9 @@ export const routes: Routes = [
   },{
     path: 'individual-upsert',
     component: IndividualUpsertComponent
+  },{
+    path: 'family-upsert',
+    component: FamilyUpsertComponent
   }
 ];
 @NgModule({

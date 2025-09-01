@@ -45,8 +45,7 @@ export class IndividualUpsertComponent {
 
     console.log(this.upsertIndividual.firstName+ " " +this.upsertIndividual.lastName);
     console.log(this.upsertIndividual.description);
-
-
+    console.log(this.upsertIndividual.statusId);
   }
 
   Reset(){
@@ -64,7 +63,7 @@ export class IndividualUpsertComponent {
     this.phoneNumberOption = 0;
     this.SetChosenPhoneNumber(this.phoneNumberOption);
     this.description = "";
-    this.statusOption = 1;
+    this.statusOption = 0;
     this.SetChosenStatus(this.statusOption);
   }
 
