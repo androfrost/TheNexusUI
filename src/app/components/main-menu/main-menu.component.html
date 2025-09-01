@@ -4,14 +4,14 @@
     <hr>
     <div class="row">
         <div class="col-12">
-            <button disabled (click)="TraversePortal(portal.FamilyUpsert)" >Add Family</button>
+            <button (click)="TraversePortal(portal.FamilyUpsert)" >Add Family</button>
         </div>
         <div class="col-12">
             <button (click)="TraversePortal(portal.IndividualUpsert)" >Add Individual</button>
         </div>
         <hr>
-        <div class="col-12">
-            <button (click)="TraversePortal(portal.NexusPortal)" >Return</button>
+        <div class="col-12 justify-content-center text-center">
+            <button class="bottom-docked-buttons" (click)="TraversePortal(portal.NexusPortal)" >Return</button>
         </div>
     </div>
 </div>

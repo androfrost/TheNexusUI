@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { IndividualUpsertComponent } from "../individual-upsert/individual-upsert.component";
 import { portal } from '../../enum/portal';
 import { MainMenuComponent } from "../main-menu/main-menu.component";
+import { FamilyUpsertComponent } from "../family-upsert/family-upsert.component";
 
 @Component({
   selector: 'app-nexus-portal',
   standalone: true,
-  imports: [CommonModule, FormsModule, IndividualUpsertComponent, MainMenuComponent],
+  imports: [CommonModule, FormsModule, IndividualUpsertComponent, MainMenuComponent, FamilyUpsertComponent],
   templateUrl: './nexus-portal.component.html',
   styleUrl: './nexus-portal.component.css'
 })
