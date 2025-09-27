@@ -2,13 +2,16 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Family } from '../../models/family';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FamilyService } from '../../services/family.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-family-upsert',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './family-upsert.component.html',
-  styleUrl: './family-upsert.component.css'
+  styleUrl: './family-upsert.component.css',
+  providers: [FamilyService]
 })
 export class FamilyUpsertComponent {
 
@@ -18,14 +21,17 @@ export class FamilyUpsertComponent {
   @Output() goToNextPortal = new EventEmitter<number>();
 
   familyName: string = this.upsertFamily.familyName;
-  familyDescription: string = this.upsertFamily.description;
+  familyDescription: string = this.upsertFamily.familyDescription;
+
+  constructor(private familyService: FamilyService) {  }
 
   Save(){
     this.upsertFamily.familyName = this.familyName;
-    this.upsertFamily.description = this.familyDescription;
+    this.upsertFamily.familyDescription = this.familyDescription;
 
-    console.log(this.upsertFamily.familyName);
-    console.log(this.upsertFamily.description);
+    this.familyService.addFamily(this.upsertFamily).subscribe((result: Family) => (this.upsertFamily = result));
+
+    this.Cancel();
   }
   
   Reset(){
