@@ -5,7 +5,7 @@ export class Individual{
     familyId: number = 0;
     locationId: number = 0;
     phoneNumberId: number = 0;
-    description: string = "";
+    individualDescription: string = "";
     individualTypeId: number = 0;
     sexId: number = 0;
     dateOfBirth: Date = new Date();

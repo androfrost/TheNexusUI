@@ -3,13 +3,16 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Individual } from '../../models/individual';
 import { status } from '../../enum/status';
+import { IndividualService } from '../../services/individual.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-individual-upsert',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './individual-upsert.component.html',
-  styleUrl: './individual-upsert.component.css'
+  styleUrl: './individual-upsert.component.css',
+  providers: [IndividualService]
 })
 export class IndividualUpsertComponent {
 
@@ -20,32 +23,43 @@ export class IndividualUpsertComponent {
   
   @Output() goToNextPortal = new EventEmitter<number>();
 
+
   families: string[] =  ["Choose Family","Mouse", "Duck","Fredrickson"];
-  familyOption: number = 0;
+  familyOption: number = this.upsertIndividual.familyId;
   firstName: string = this.upsertIndividual.firstName;
   lastName: string = this.upsertIndividual.lastName;
   individualTypes: string[] =  ["Choose Type","Person", "Animal"];
-  individualTypeOption: number = this.upsertIndividual.sexId ;
+  individualTypeOption: number = 0;
   sexes: string[] =  ["Choose Sex","Male", "Female"];
-  sexOption: number = 0;
+  sexOption: number = 1;
   dateOfBirth: Date = this.upsertIndividual.dateOfBirth;
   locations: string[] =  ["Choose Address","123 Fake Street", "321 Real Street","2828 Squarehill Dr"];
   locationOption: number = 0;
   phoneNumbers: string[] =  ["Choose Phone Number","123-456-7890"];
   phoneNumberOption: number = 0;
-  description: string = this.upsertIndividual.description;
+  description: string = this.upsertIndividual.individualDescription;
   statuses: string[] =  ["Active", "Inactive", "Deceased"];
   statusOption: number = this.upsertIndividual.statusId;
 
+  constructor(private individualService: IndividualService) {  }
+
   Save(){
+    // Set Individual object values to save
     this.upsertIndividual.firstName = this.firstName;
     this.upsertIndividual.lastName = this.lastName;
-    this.upsertIndividual.description = this.description;
+    this.upsertIndividual.individualDescription = this.description;
     this.upsertIndividual.statusId = this.statusOption;
+    this.upsertIndividual.individualTypeId = this.individualTypeOption;
+    this.upsertIndividual.sexId = this.sexOption;
+    this.upsertIndividual.dateOfBirth = this.dateOfBirth;
+    this.upsertIndividual.familyId = this.familyOption;
+    this.upsertIndividual.locationId = this.locationOption;
+    this.upsertIndividual.phoneNumberId = this.phoneNumberOption;
 
-    console.log(this.upsertIndividual.firstName+ " " +this.upsertIndividual.lastName);
-    console.log(this.upsertIndividual.description);
-    console.log(this.upsertIndividual.statusId);
+    this.individualService.addIndividual(this.upsertIndividual).subscribe((result: Individual) => (this.upsertIndividual = result));
+
+    // Call cancel to reset and exit
+    this.Cancel();
   }
 
   Reset(){
@@ -68,6 +82,7 @@ export class IndividualUpsertComponent {
   }
 
   Cancel(){
+    // Do Reset followed by returning to previous screen
     this.Reset();
     this.goToNextPortal.emit(this.entrancePortal);
   }
