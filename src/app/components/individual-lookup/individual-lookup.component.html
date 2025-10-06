@@ -1,0 +1,33 @@
+<div class="card portal">
+    <div class="card-title"><b>Individual Lookup</b></div>
+    <hr>
+    <div class="portal-body">
+        <div class="row">
+            <div class="col-5">
+                <select class="drop-secid" id="drop-secid" (change)="searchLookupList()" [(ngModel)]="lookupSecondaryId">
+                    <option *ngFor="let id of secondIds; let i = index" [value]="i">{{ id.title }}</option>
+                </select>
+            </div>
+            <div class="col-7">
+                <input type="text" [(ngModel)]="lookupTerm" placeholder="Enter search term" (ngModelChange) = "searchLookupList()">
+            </div>
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <th (click)="OrderId()">ID</th>
+                        <th (click)="OrderName()">Name</th>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <tr *ngFor="let item of lookupItems">
+                            <td class="id">{{ item.id }}</td>
+                            <td class="name">{{ item.name }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="portal-footer text-center">
+        <button class="bottom-docked-buttons" (click)="TraversePortal(this.entrancePortal)">Return</button>
+    </div>
+</div>

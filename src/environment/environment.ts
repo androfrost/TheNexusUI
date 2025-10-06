@@ -5,6 +5,9 @@
 export const environment = {
   production: false,
   APIUrl: 'https://localhost:7183/api',
+  // Use a relative path in development so the Angular dev server proxy (proxy.conf.json)
+  // can forward requests to the backend and avoid CORS / self-signed cert issues.
+  //APIUrl: '/api',
 };
 
 /*

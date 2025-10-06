@@ -27,18 +27,33 @@ hr {
 .portal{
     display:flex;
     flex-direction: column;
-    
+    position: relative; /* anchor children */
     border-width: 3px;
     border-color: rgb(155, 198, 212);
     border-style: solid;
     margin: 3px;
     background-color: rgb(202, 198, 198);
     min-height: 300px;
-    max-height: 740px;
+    /* max-height: 740px; */
+    height: 70vh;
     max-width: 500px;
-    overflow-y: hidden;
+    overflow-y: auto;
+    /* portal now contains a scrollable body and a non-scrolling footer */
+    padding: 0; /* body/footer will handle their own padding */
+    overflow-x: hidden;
+}
+
+/* scrollable content area inside a portal */
+.portal-body{
     padding: 5px;
-    overflow-x: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1 1 auto;
+}
+
+.portal-footer{
+    flex: 0 0 auto;
+    padding: 5px 5px;
 }
 
 .portal-center{
@@ -52,8 +67,14 @@ hr {
 }
 
 .bottom-docked-buttons{
-    position: absolute;   /* Change from fixed to absolute */
-    bottom: 0;
-    left: 0;
+    /* footer button — not absolutely positioned anymore so it doesn't move with scroll */
+    position: static;
     width: 100%;
+    box-sizing: border-box;
+    border-width: 5px;
+    border-color: rgb(155, 198, 212);
+}
+
+#table{
+    border: 10px;
 }
