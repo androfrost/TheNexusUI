@@ -1,17 +1,18 @@
 <div class="card portal">
-                    
     <div class="card-title"><b>Main Menu</b></div>
     <hr>
-    <div class="row">
-        <div class="col-12">
-            <button (click)="TraversePortal(portal.FamilyUpsert)" >Add Family</button>
+    <div class="portal-body">
+        <div class="row">
+            <div class="col-12">
+                <button (click)="TraversePortal(portal.FamilyUpsert)">Add Family</button>
+            </div>
+            <div class="col-12">
+                <button (click)="TraversePortal(portal.IndividualOptions)">Individual</button>
+            </div>
+            <hr>
         </div>
-        <div class="col-12">
-            <button (click)="TraversePortal(portal.IndividualUpsert)" >Add Individual</button>
-        </div>
-        <hr>
-        <div class="col-12 justify-content-center text-center">
-            <button class="bottom-docked-buttons" (click)="TraversePortal(portal.NexusPortal)" >Return</button>
-        </div>
+    </div>
+    <div class="portal-footer text-center">
+        <button class="bottom-docked-buttons" (click)="TraversePortal(portal.NexusPortal)">Return</button>
     </div>
 </div>

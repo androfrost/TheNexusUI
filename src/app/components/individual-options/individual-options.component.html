@@ -1,0 +1,18 @@
+<div class="card portal">
+    <div class="card-title"><b>Individual Menu</b></div>
+    <hr>
+    <div class="portal-body">
+        <div class="row">
+            <div class="col-12">
+                <button (click)="TraversePortal(portal.IndividualUpsert)">Add Individual</button>
+            </div>
+            <div class="col-12">
+                <button (click)="TraversePortal(portal.IndividualLookup)">Find Individual</button>
+            </div>
+            <hr>
+        </div>
+    </div>
+    <div class="portal-footer text-center">
+        <button class="bottom-docked-buttons" (click)="TraversePortal(this.entrancePortal)">Return</button>
+    </div>
+</div>

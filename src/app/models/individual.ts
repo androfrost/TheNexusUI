@@ -1,5 +1,5 @@
 export class Individual{
-    id: number = 0;
+    individualId: number = 0;
     firstName: string = "";
     lastName: string = "";
     familyId: number = 0;
