@@ -23,6 +23,7 @@ export class IndividualOptionsComponent {
   
   @Output() goToNextPortal = new EventEmitter<number>();
   @Output() lookupDto = new EventEmitter<LookupDto[]>();
+  @Output() selectedItemChange = new EventEmitter<boolean>();
 
   lookupDtoOptions: LookupDto[] = []
   individualsOptions: Individual[] = [];
@@ -31,14 +32,12 @@ constructor(private individualService: IndividualService) { }
 
   TraversePortal(portalId: number) : void{
     this.goToNextPortal.emit(portalId);
-    
-    // Commented out as it was causing errors
-    // this.IndividualsLookup(portalId);
-    // this.lookupDto.emit(this.lookupDtoOptions);
+    this.selectedItemChange.emit(true);
   }
 
   Cancel(){
     this.goToNextPortal.emit(this.entrancePortal);
+    this.selectedItemChange.emit(true);
   } 
 
   activatePortal(portalId: number) : void{
