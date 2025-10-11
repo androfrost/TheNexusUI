@@ -20,17 +20,36 @@
                     <app-family-upsert [entrancePortal] = portal.ChoosePortal (goToNextPortal)=activatePortal($event)></app-family-upsert>
                 </div>
                 <div *ngIf="portalState === portal.IndividualOptions">
-                    <app-individual-options [entrancePortal] = portal.ChoosePortal (goToNextPortal)=activatePortal($event)></app-individual-options>
+                    <app-individual-options 
+                        [entrancePortal] = portal.ChoosePortal 
+                        (goToNextPortal)=activatePortal($event)
+                        (selectedItemChange)=resetData()
+                    ></app-individual-options>
                 </div>
                 <div *ngIf="portalState === portal.IndividualUpsert">
-                    <app-individual-upsert [entrancePortal] = portal.IndividualOptions (goToNextPortal)=activatePortal($event)></app-individual-upsert>
+                    <app-individual-upsert 
+                        [entrancePortal] = portal.IndividualOptions 
+                        [upsertIndividual]=this.individualMain
+                        (goToNextPortal)=activatePortal($event)>
+                    </app-individual-upsert>
                 </div>
                 <div *ngIf="portalState === portal.IndividualLookup">
-                    <app-individual-lookup 
-                        [entrancePortal] = portal.IndividualOptions 
-                        (goToNextPortal)=activatePortal($event)
-                        [lookupDto] = lookupDtoMain
-                    ></app-individual-lookup>
+                    <ng-container *ngIf="!loadingLookup; else loadingTpl">
+                        <app-individual-lookup 
+                            [entrancePortal] = portal.IndividualOptions
+                            [lookupDto] = lookupDtoMain
+                            (goToNextPortal)=activatePortal($event)
+                            (selectedItemChange)=onSelectedItemChange($event)
+                        ></app-individual-lookup>
+                    </ng-container>
+                    <ng-template #loadingTpl>
+                        <div class="card portal">
+                            <div class="card-title"><b>Loading Individuals...</b></div>
+                            <div class="spinner-wrapper">
+                                <div class="spinner" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                    </ng-template>
                 </div>
             </div>
         </div>

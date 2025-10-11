@@ -54,6 +54,10 @@ hr {
 .portal-footer{
     flex: 0 0 auto;
     padding: 5px 5px;
+    display: flex;
+    align-items: center; /* vertical centering */
+    justify-content: center; /* horizontal centering */
+    gap: 0.5rem;
 }
 
 .portal-center{
@@ -69,12 +73,43 @@ hr {
 .bottom-docked-buttons{
     /* footer button — not absolutely positioned anymore so it doesn't move with scroll */
     position: static;
-    width: 100%;
+    width: auto; /* don't force full width in footers */
+    min-width: 150px;
     box-sizing: border-box;
     border-width: 5px;
     border-color: rgb(155, 198, 212);
+    
+    /* Responsive: on small screens make footer buttons full-width for easier tapping */
+    @media (max-width: 576px) {
+        .portal-footer .bottom-docked-buttons {
+            width: 100%;
+        }
+    }
+}
+
+.individual-buttons {
+    width: 100%;
 }
 
 #table{
     border: 10px;
+}
+
+/* Simple centered spinner */
+.spinner-wrapper{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding: 1rem;
+}
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 6px solid rgba(0,0,0,0.1);
+    border-top-color: #007bff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }

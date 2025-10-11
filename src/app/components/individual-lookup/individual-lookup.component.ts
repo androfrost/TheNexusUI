@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { portal } from '../../enum/portal';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { LookupDto } from '../../models/dto/lookup-dto';
   templateUrl: './individual-lookup.component.html',
   styleUrl: './individual-lookup.component.css'
 })
-export class IndividualLookupComponent {
+export class IndividualLookupComponent implements OnChanges {
 
   portal = portal;
   portalState: number = 0;
@@ -20,10 +20,11 @@ export class IndividualLookupComponent {
   @Input() lookupDto: LookupDto[] = [];
   
   @Output() goToNextPortal = new EventEmitter<number>();
+  @Output() selectedItemChange = new EventEmitter<LookupDto>();
 
   lookupTerm: string = "";
   lookupSecondaryId: number = 0;
-  lookupItems: LookupDto[] = this.lookupDto;
+  lookupItems: LookupDto[] = [];
 
   secondIds: any[] = [
     {id: 0, title: "Choose Family"},
@@ -35,6 +36,13 @@ export class IndividualLookupComponent {
 
   ngOnInit(): void {
     this.searchLookupList();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['lookupDto']) {
+      // Parent updated the lookupDto input (e.g. async fetch completed)
+      this.searchLookupList();
+    }
   }
 
   TraversePortal(portalId: number) : void{
@@ -64,5 +72,10 @@ export class IndividualLookupComponent {
   }
   OrderName(): void {
     this.lookupItems = this.lookupItems.sort((a, b) => a.name.localeCompare(b.name));
+  }
+ 
+  SelectItem(item: LookupDto): void {
+    this.selectedItemChange.emit(item);
+    this.TraversePortal(portal.IndividualUpsert);
   }
 }

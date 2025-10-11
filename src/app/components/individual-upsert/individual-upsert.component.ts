@@ -5,6 +5,7 @@ import { Individual } from '../../models/individual';
 import { status } from '../../enum/status';
 import { IndividualService } from '../../services/individual.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { portal } from '../../enum/portal';
 
 @Component({
   selector: 'app-individual-upsert',
@@ -23,7 +24,6 @@ export class IndividualUpsertComponent {
   
   @Output() goToNextPortal = new EventEmitter<number>();
 
-
   families: string[] =  ["Choose Family","Mouse", "Duck","Fredrickson"];
   familyOption: number = this.upsertIndividual.familyId;
   firstName: string = this.upsertIndividual.firstName;
@@ -31,7 +31,7 @@ export class IndividualUpsertComponent {
   individualTypes: string[] =  ["Choose Type","Person", "Animal"];
   individualTypeOption: number = 0;
   sexes: string[] =  ["Choose Sex","Male", "Female"];
-  sexOption: number = 1;
+  sexOption: number = 0;
   dateOfBirth: Date = this.upsertIndividual.dateOfBirth;
   locations: string[] =  ["Choose Address","123 Fake Street", "321 Real Street","2828 Squarehill Dr"];
   locationOption: number = 0;
@@ -41,7 +41,33 @@ export class IndividualUpsertComponent {
   statuses: string[] =  ["Active", "Inactive", "Deceased"];
   statusOption: number = this.upsertIndividual.statusId;
 
-  constructor(private individualService: IndividualService) {  }
+  isUpdate: boolean = false;
+
+  constructor(private individualService: IndividualService) {
+  }
+
+  ngOnInit(): void {
+    // Determine if this is an update or add based on presence of IndividualId
+    // If update, set all fields to match the input individual
+    // If add, reset all fields to blank/zero
+    if (this.upsertIndividual.individualId > 0){
+      this.isUpdate = true;
+    }else{
+      this.isUpdate = false;
+      this.upsertIndividual = new Individual();
+    }
+    // Set all fields to match the input individual if for update (will be blank for adding new)
+    this.firstName = this.upsertIndividual.firstName;
+    this.lastName = this.upsertIndividual.lastName;
+    this.description = this.upsertIndividual.individualDescription;
+    this.statusOption = this.upsertIndividual.statusId;
+    this.individualTypeOption = this.upsertIndividual.individualTypeId;
+    this.sexOption = this.upsertIndividual.sexId;
+    this.dateOfBirth = this.upsertIndividual.dateOfBirth;
+    this.familyOption = this.upsertIndividual.familyId;
+    this.locationOption = this.upsertIndividual.locationId;
+    this.phoneNumberOption = this.upsertIndividual.phoneNumberId;
+  }
 
   Save(){
     // Set Individual object values to save
@@ -55,14 +81,18 @@ export class IndividualUpsertComponent {
     this.upsertIndividual.familyId = this.familyOption;
     this.upsertIndividual.locationId = this.locationOption;
     this.upsertIndividual.phoneNumberId = this.phoneNumberOption;
-
-    this.individualService.addIndividual(this.upsertIndividual).subscribe((result: Individual) => (this.upsertIndividual = result));
+    // Call appropriate service function based on add vs update
+    if (this.isUpdate)
+      this.individualService.updateIndividual(this.upsertIndividual).subscribe((result: Individual) => (this.upsertIndividual = result));
+    else
+      this.individualService.addIndividual(this.upsertIndividual).subscribe((result: Individual) => (this.upsertIndividual = result));
 
     // Call cancel to reset and exit
     this.Cancel();
   }
 
   Reset(){
+    // Reset all fields to blank/zero
     this.firstName = "";
     this.lastName = "";
     this.individualTypeOption = 0;

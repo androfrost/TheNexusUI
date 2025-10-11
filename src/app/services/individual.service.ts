@@ -26,8 +26,8 @@ export class IndividualService {
     return this.http.get<Individual[]>(`${environment.APIUrl}/${this.url}/status/${statusId}`);
   }
 
-  public updateIndividual(individual: Individual) : Observable<Individual[]> {
-    return this.http.put<Individual[]>(`${environment.APIUrl}/${this.url}`, individual);
+  public updateIndividual(individual: Individual) : Observable<Individual> {
+    return this.http.put<Individual>(`${environment.APIUrl}/${this.url}`, individual);
   }
 
   public addIndividual(individual: Individual) : Observable<Individual> {
