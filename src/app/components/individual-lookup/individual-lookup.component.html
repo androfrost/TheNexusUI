@@ -1,11 +1,11 @@
 <div class="card portal">
-    <div class="card-title"><b>Individual Lookup</b></div>
+    <div class="card-title"><b>Lookup</b></div>
     <hr>
     <div class="portal-body">
         <div class="row">
             <div class="col-5">
                 <select class="drop-secid" id="drop-secid" (change)="searchLookupList()" [(ngModel)]="lookupSecondaryId">
-                    <option *ngFor="let id of secondIds; let i = index" [value]="i">{{ id.title }}</option>
+                    <option *ngFor="let id of secondIds; let i = index" [value]="i">{{ id.name }}</option>
                 </select>
             </div>
             <div class="col-7">

@@ -22,15 +22,36 @@ export class FamilyUpsertComponent {
 
   familyName: string = this.upsertFamily.familyName;
   familyDescription: string = this.upsertFamily.familyDescription;
+  
+  isUpdate: boolean = false;
 
   constructor(private familyService: FamilyService) {  }
+
+  ngOnInit(): void{
+    // Determine if this is an update or add based on presence of IndividualId
+    // If update, set all fields to match the input individual
+    // If add, reset all fields to blank/zero
+    if (this.upsertFamily.familyId > 0){
+      this.isUpdate = true;
+    }else{
+      this.isUpdate = false;
+      this.upsertFamily = new Family();
+    }
+    this.familyName = this.upsertFamily.familyName;
+    this.familyDescription = this.upsertFamily.familyDescription;
+  }
 
   Save(){
     this.upsertFamily.familyName = this.familyName;
     this.upsertFamily.familyDescription = this.familyDescription;
 
-    this.familyService.addFamily(this.upsertFamily).subscribe((result: Family) => (this.upsertFamily = result));
+    // Call appropriate service function based on add vs update
+    if (this.isUpdate)
+      this.familyService.updateFamily(this.upsertFamily).subscribe((result: Family) => (this.upsertFamily = result));
+    else
+      this.familyService.addFamily(this.upsertFamily).subscribe((result: Family) => (this.upsertFamily = result));
 
+    // Call cancel to reset and exit
     this.Cancel();
   }
   

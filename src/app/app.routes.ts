@@ -5,6 +5,7 @@ import { IndividualUpsertComponent } from './components/individual-upsert/indivi
 import { FamilyUpsertComponent } from './components/family-upsert/family-upsert.component';
 import { IndividualOptionsComponent } from './components/individual-options/individual-options.component';
 import { IndividualLookupComponent } from './components/individual-lookup/individual-lookup.component';
+import { FamilyOptionsComponent } from './components/family-options/family-options.component';
 
 export const routes: Routes = [
   {
@@ -18,7 +19,10 @@ export const routes: Routes = [
     component: IndividualUpsertComponent
   },{
     path: 'individual-lookup',
-    component: IndividualUpsertComponent
+    component: IndividualLookupComponent
+  },{
+    path: 'family-options',
+    component: FamilyOptionsComponent
   },{
     path: 'family-upsert',
     component: FamilyUpsertComponent

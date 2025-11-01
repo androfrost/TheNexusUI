@@ -1,0 +1,18 @@
+<div class="card portal">
+    <div class="card-title"><b>Family Menu</b></div>
+    <hr>
+    <div class="portal-body">
+        <div class="row">
+            <div class="col-12">
+                <button (click)="TraversePortal(portal.FamilyUpsert)">Add Family</button>
+            </div>
+            <div class="col-12">
+                <button (click)="TraversePortal(portal.FamilyLookup)">Find Family</button>
+            </div>
+            <hr>
+        </div>
+    </div>
+    <div class="portal-footer text-center">
+        <button class="bottom-docked-buttons" (click)="TraversePortal(this.entrancePortal)">Return</button>
+    </div>
+</div>
