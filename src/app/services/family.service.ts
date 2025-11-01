@@ -22,8 +22,8 @@ export class FamilyService {
     return this.http.get<Family>(`${environment.APIUrl}/${familyId}/${this.url}`);
   }
 
-  public updateFamily(family: Family) : Observable<Family[]> {
-    return this.http.put<Family[]>(`${environment.APIUrl}/${this.url}`, family);
+  public updateFamily(family: Family) : Observable<Family> {
+    return this.http.put<Family>(`${environment.APIUrl}/${this.url}`, family);
   }
 
   public addFamily(family: Family) : Observable<Family> {

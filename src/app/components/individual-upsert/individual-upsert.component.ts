@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Individual } from '../../models/individual';
 import { status } from '../../enum/status';
 import { IndividualService } from '../../services/individual.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { portal } from '../../enum/portal';
+import { DropdownDto } from '../../models/dto/dropdown-dto';
 
 @Component({
   selector: 'app-individual-upsert',
@@ -21,10 +22,11 @@ export class IndividualUpsertComponent {
 
   @Input() upsertIndividual: Individual = new Individual();
   @Input() entrancePortal: number = 0;
+  @Input() dropdownDto: DropdownDto[] = [];
   
   @Output() goToNextPortal = new EventEmitter<number>();
 
-  families: string[] =  ["Choose Family","Mouse", "Duck","Fredrickson"];
+  families: DropdownDto[] =  this.dropdownDto
   familyOption: number = this.upsertIndividual.familyId;
   firstName: string = this.upsertIndividual.firstName;
   lastName: string = this.upsertIndividual.lastName;
@@ -68,6 +70,17 @@ export class IndividualUpsertComponent {
     this.locationOption = this.upsertIndividual.locationId;
     this.phoneNumberOption = this.upsertIndividual.phoneNumberId;
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+      if (changes['dropdownDto']) {
+        // Parent updated the dropdownDto input (e.g. async fetch completed)
+        this.families = [];
+        for(const item of this.dropdownDto) 
+          this.families.push(item);
+        
+        this.families.unshift({id: 0, name: "Choose Family"});
+      }
+    }
 
   Save(){
     // Set Individual object values to save

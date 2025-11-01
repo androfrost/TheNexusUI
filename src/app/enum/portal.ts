@@ -3,6 +3,7 @@ export enum portal{
     ChoosePortal,
     FamilyOptions,
     FamilyUpsert,
+    FamilyLookup,
     IndividualOptions,
     IndividualUpsert,
     IndividualLookup

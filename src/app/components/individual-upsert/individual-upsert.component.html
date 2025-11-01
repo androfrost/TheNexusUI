@@ -8,7 +8,7 @@
         </div>
         <div class="col-12 col-sm-6">
             <select class="drop-fam" id="drop-fam" (change)="GetChosenFamily()" [(ngModel)]="familyOption">
-                <option *ngFor="let family of families; let i = index" [value]="i">{{ family }}</option>
+                <option *ngFor="let family of families; let i = index" [value]="i">{{ family.name }}</option>
             </select>
         </div>
     </div>

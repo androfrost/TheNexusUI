@@ -17,34 +17,69 @@
                     <app-main-menu (goToNextPortal)=activatePortal($event)></app-main-menu>
                 </div>
                 <div *ngIf="portalState === portal.FamilyUpsert">
-                    <app-family-upsert [entrancePortal] = portal.ChoosePortal (goToNextPortal)=activatePortal($event)></app-family-upsert>
+                    <app-family-upsert 
+                        [entrancePortal] =          portal.FamilyOptions
+                        [upsertFamily] =            this.familyMain 
+                        (goToNextPortal) =          activatePortal($event)
+                    ></app-family-upsert>
                 </div>
                 <div *ngIf="portalState === portal.IndividualOptions">
                     <app-individual-options 
-                        [entrancePortal] = portal.ChoosePortal 
-                        (goToNextPortal)=activatePortal($event)
-                        (selectedItemChange)=resetData()
+                        [entrancePortal] =          portal.ChoosePortal 
+                        (goToNextPortal) =          activatePortal($event)
+                        (selectedItemChange) =      resetData()
                     ></app-individual-options>
                 </div>
                 <div *ngIf="portalState === portal.IndividualUpsert">
                     <app-individual-upsert 
-                        [entrancePortal] = portal.IndividualOptions 
-                        [upsertIndividual]=this.individualMain
-                        (goToNextPortal)=activatePortal($event)>
+                        [entrancePortal] =          portal.IndividualOptions
+                        [dropdownDto] =             dropdownDtoMain
+                        [upsertIndividual] =        this.individualMain
+                        (goToNextPortal) =          activatePortal($event)>
                     </app-individual-upsert>
                 </div>
                 <div *ngIf="portalState === portal.IndividualLookup">
                     <ng-container *ngIf="!loadingLookup; else loadingTpl">
                         <app-individual-lookup 
-                            [entrancePortal] = portal.IndividualOptions
-                            [lookupDto] = lookupDtoMain
-                            (goToNextPortal)=activatePortal($event)
-                            (selectedItemChange)=onSelectedItemChange($event)
+                            [entrancePortal] =      portal.IndividualOptions
+                            [lookupDto] =           lookupDtoMain
+                            [dropdownDto] =         dropdownDtoMain
+                            [lookupPortal] =        portal.IndividualUpsert
+                            (goToNextPortal) =      activatePortal($event)
+                            (selectedItemChange) =  onSelectedItemChange($event)
+                            (sortChange) =          updateSort($event)
                         ></app-individual-lookup>
                     </ng-container>
                     <ng-template #loadingTpl>
                         <div class="card portal">
                             <div class="card-title"><b>Loading Individuals...</b></div>
+                            <div class="spinner-wrapper">
+                                <div class="spinner" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+                <div *ngIf="portalState === portal.FamilyOptions">
+                    <app-family-options 
+                        [entrancePortal] =          portal.ChoosePortal 
+                        (goToNextPortal) =          activatePortal($event)
+                        (selectedItemChange) =      resetData()
+                    ></app-family-options>
+                </div>
+                <div *ngIf="portalState === portal.FamilyLookup">
+                    <ng-container *ngIf="!loadingFamily; else loadingFamilyTpl">
+                        <app-individual-lookup  
+                            [entrancePortal] =      portal.FamilyOptions
+                            [lookupDto] =           lookupDtoMain
+                            [lookupPortal] =        portal.FamilyUpsert
+                            (goToNextPortal) =      activatePortal($event)
+                            (selectedItemChange) =  onSelectedItemChange($event)
+                            (sortChange) =          updateSort($event)
+                        ></app-individual-lookup>
+                    </ng-container>
+                    <ng-template #loadingFamilyTpl>
+                        <div class="card portal">
+                            <div class="card-title"><b>Loading Families...</b></div>
                             <div class="spinner-wrapper">
                                 <div class="spinner" aria-hidden="true"></div>
                             </div>
