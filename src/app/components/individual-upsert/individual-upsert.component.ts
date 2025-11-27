@@ -7,6 +7,7 @@ import { IndividualService } from '../../services/individual.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { portal } from '../../enum/portal';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
+import { DataFormatting } from '../../helpers/data-formatting';
 
 @Component({
   selector: 'app-individual-upsert',
@@ -34,7 +35,8 @@ export class IndividualUpsertComponent {
   individualTypeOption: number = 0;
   sexes: string[] =  ["Choose Sex","Male", "Female"];
   sexOption: number = 0;
-  dateOfBirth: Date = this.upsertIndividual.dateOfBirth;
+  dateOfBirthDate: Date = this.upsertIndividual.dateOfBirth;
+  dateOfBirthString: string = this.dateOfBirthDate.toISOString();
   locations: string[] =  ["Choose Address","123 Fake Street", "321 Real Street","2828 Squarehill Dr"];
   locationOption: number = 0;
   phoneNumbers: string[] =  ["Choose Phone Number","123-456-7890"];
@@ -44,6 +46,8 @@ export class IndividualUpsertComponent {
   statusOption: number = this.upsertIndividual.statusId;
 
   isUpdate: boolean = false;
+
+  DataFromatting: DataFormatting = new DataFormatting();
 
   constructor(private individualService: IndividualService) {
   }
@@ -65,7 +69,7 @@ export class IndividualUpsertComponent {
     this.statusOption = this.upsertIndividual.statusId;
     this.individualTypeOption = this.upsertIndividual.individualTypeId;
     this.sexOption = this.upsertIndividual.sexId;
-    this.dateOfBirth = this.upsertIndividual.dateOfBirth;
+    this.dateOfBirthDate = this.upsertIndividual.dateOfBirth;
     this.familyOption = this.upsertIndividual.familyId;
     this.locationOption = this.upsertIndividual.locationId;
     this.phoneNumberOption = this.upsertIndividual.phoneNumberId;
@@ -80,6 +84,9 @@ export class IndividualUpsertComponent {
         
         this.families.unshift({id: 0, name: "Choose Family"});
       }
+      if (changes['upsertIndividual'] && this.upsertIndividual?.dateOfBirth) {
+        this.dateOfBirthString = DataFormatting.formatForInput(this.upsertIndividual.dateOfBirth);
+      }
     }
 
   Save(){
@@ -90,7 +97,7 @@ export class IndividualUpsertComponent {
     this.upsertIndividual.statusId = this.statusOption;
     this.upsertIndividual.individualTypeId = this.individualTypeOption;
     this.upsertIndividual.sexId = this.sexOption;
-    this.upsertIndividual.dateOfBirth = this.dateOfBirth;
+    this.upsertIndividual.dateOfBirth = this.dateOfBirthDate; 
     this.upsertIndividual.familyId = this.familyOption;
     this.upsertIndividual.locationId = this.locationOption;
     this.upsertIndividual.phoneNumberId = this.phoneNumberOption;
@@ -112,7 +119,8 @@ export class IndividualUpsertComponent {
     this.SetChosenType(this.individualTypeOption);
     this.sexOption = 0;
     this.SetChosenSex(this.sexOption);
-    this.dateOfBirth = new Date();
+    this.dateOfBirthDate = new Date();
+    this.dateOfBirthString = "";
     this.familyOption = 0;
     this.SetChosenFamily(this.familyOption);
     this.locationOption = 0;
@@ -188,5 +196,9 @@ export class IndividualUpsertComponent {
   SetChosenStatus(typeId: number) : void{
     let chosenStatus = document.getElementById("drop-sta") as HTMLSelectElement;
     chosenStatus.selectedIndex = typeId;
+  }
+
+  updateDateForSaving(){
+    this.dateOfBirthDate = new Date(this.dateOfBirthString);
   }
 }
