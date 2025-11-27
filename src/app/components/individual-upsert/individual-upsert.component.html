@@ -58,7 +58,7 @@
             Date of birth
         </div>
         <div class="col-12 col-sm-6">
-            <input type="date" [(ngModel)]="dateOfBirth">
+            <input type="date" [(ngModel)]="dateOfBirthString" (ngModelChange)="updateDateForSaving()">
         </div>
     </div>
     <hr>
