@@ -150,8 +150,9 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     const handleResult2 = (result: any[]) => {
       // Normalize results into LookupDto[]
       this.dropdownDtoMain = [];
+
       for (const item of result || []) {
-        const id = item.individualId ?? item.familyId ?? item.id ?? 0;
+        const id = item.familyId ?? item.individualId ?? item.id ?? 0;
         const name = item.firstName ? `${item.firstName} ${item.lastName ?? ''}`.trim()
                      : item.familyName ?? item.name ?? '';
         this.dropdownDtoMain.push({ id, name });
