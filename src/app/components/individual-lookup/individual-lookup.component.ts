@@ -6,6 +6,8 @@ import { LookupDto } from '../../models/dto/lookup-dto';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
 import { Console } from 'console';
 import { SortState } from '../../enum/sort-state';
+import { lookup } from 'dns';
+import { Navigation } from '../../helpers/navigation';
 
 @Component({
   selector: 'app-individual-lookup',
@@ -19,10 +21,11 @@ export class IndividualLookupComponent implements OnChanges {
   portal = portal;
   portalState: number = 0;
 
-  @Input() entrancePortal: number = 0;
-  @Input() lookupDto: LookupDto[] = [];
-  @Input() dropdownDto: DropdownDto[] = [];
-  @Input() lookupPortal: number = 0;
+  @Input() allPortalNavigation: number[] = []; // To keep track of navigation history and know where we will return to
+  @Input() lookupDto: LookupDto[] = []; // The full list of lookup items passed from parent
+  @Input() dropdownDto: DropdownDto[] = []; // The full list of dropdown items passed from parent
+  @Input() lookupPortal: number = 0; //
+  @Input() filteredSecondaryId: number = 0;  
   
   @Output() goToNextPortal = new EventEmitter<number>();
   @Output() selectedItemChange = new EventEmitter<LookupDto>();
@@ -30,15 +33,20 @@ export class IndividualLookupComponent implements OnChanges {
   private currentSortField?: 'id' | 'name';
   private currentSortOrder: 'asc' | 'desc' = 'asc';
 
-
   lookupTerm: string = "";
   lookupSecondaryId: number = 0;
   lookupItems: LookupDto[] = [];
 
   secondIds: DropdownDto[] = this.dropdownDto;
+  navigation = Navigation;
+
+  isDisabled: boolean = false;    // To disable anything that needs to not change when only wanting specific secondary Id
 
   ngOnInit(): void {
-    this.searchLookupList();
+    if (this.filteredSecondaryId != 0 && this.allPortalNavigation[this.allPortalNavigation.length-2] == this.portal.FamilyUpsert){
+      this.isDisabled = true;
+    }
+    this.filterSearchLookupList();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -47,7 +55,7 @@ export class IndividualLookupComponent implements OnChanges {
       this.currentSortField = undefined;
       this.currentSortOrder = 'asc';
       // Parent updated the lookupDto input (e.g. async fetch completed)
-      this.searchLookupList();
+      this.filterSearchLookupList();
     }
     if (changes['dropdownDto']) {
       // Parent updated the dropdownDto input (e.g. async fetch completed)
@@ -64,7 +72,8 @@ export class IndividualLookupComponent implements OnChanges {
   }
 
   Cancel(){
-    this.goToNextPortal.emit(this.entrancePortal);
+    var returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
+    this.goToNextPortal.emit(returnPortal);
   } 
 
   ActivatePortal(portalId: number) : void{
@@ -72,12 +81,17 @@ export class IndividualLookupComponent implements OnChanges {
   }
 
   // When updating what filters are allowed, update what is to be displayed
-  searchLookupList(): void {
+  filterSearchLookupList(): void {
+    if (this.filteredSecondaryId != 0 && this.allPortalNavigation[this.allPortalNavigation.length-2] == this.portal.FamilyUpsert){
+      this.lookupSecondaryId = this.filteredSecondaryId;
+    }
+    
     this.lookupItems = this.lookupDto;
-    if (this.lookupSecondaryId != 0){
-      this.lookupItems = this.lookupItems.filter(item => item.secondId.toString().includes(this.lookupSecondaryId.toString()));
+    if (this.lookupSecondaryId !== 0){
+      this.lookupItems = this.lookupItems.filter(item => item.secondId===this.lookupSecondaryId);
     }
     this.lookupItems = this.lookupItems.filter(item => item.name.toLowerCase().includes(this.lookupTerm.toLowerCase()));
+    
   }
 
   // Simple sorting functions for the lookup list

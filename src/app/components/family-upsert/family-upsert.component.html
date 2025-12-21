@@ -20,6 +20,9 @@
             <textarea [(ngModel)]="familyDescription" rows="3"></textarea>
         </div>
     </div>
+    <div class="col-12">
+        <button (click)="TraversePortal(portal.IndividualLookup)" [disabled]="!isUpdate">Lookup Members</button>
+    </div>
     <hr>
 
     <div class="portal-footer text-center">

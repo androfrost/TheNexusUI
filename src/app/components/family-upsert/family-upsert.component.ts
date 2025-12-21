@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FamilyService } from '../../services/family.service';
 import { HttpClientModule } from '@angular/common/http';
+import { portal } from '../../enum/portal';
+import { Navigation } from '../../helpers/navigation';
 
 @Component({
   selector: 'app-family-upsert',
@@ -15,15 +17,19 @@ import { HttpClientModule } from '@angular/common/http';
 })
 export class FamilyUpsertComponent {
 
+  portal = portal;
+
   @Input() upsertFamily : Family = new Family();
-  @Input() entrancePortal: number = 0;
+  @Input() allPortalNavigation: number[] = [];
 
   @Output() goToNextPortal = new EventEmitter<number>();
+  @Output() selectedItemChange = new EventEmitter<boolean>();
 
   familyName: string = this.upsertFamily.familyName;
   familyDescription: string = this.upsertFamily.familyDescription;
   
   isUpdate: boolean = false;
+  navigation = Navigation
 
   constructor(private familyService: FamilyService) {  }
 
@@ -39,6 +45,11 @@ export class FamilyUpsertComponent {
     }
     this.familyName = this.upsertFamily.familyName;
     this.familyDescription = this.upsertFamily.familyDescription;
+  }
+
+  TraversePortal(portalId: number) : void{
+    this.goToNextPortal.emit(portalId);
+    this.selectedItemChange.emit(true);
   }
 
   Save(){
@@ -63,6 +74,7 @@ export class FamilyUpsertComponent {
 
   Cancel(){
     this.Reset();
-    this.goToNextPortal.emit(this.entrancePortal);
+    var returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
+    this.goToNextPortal.emit(returnPortal);
   }
 }

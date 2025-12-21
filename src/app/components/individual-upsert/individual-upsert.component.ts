@@ -8,6 +8,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { portal } from '../../enum/portal';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
 import { DataFormatting } from '../../helpers/data-formatting';
+import { Navigation } from '../../helpers/navigation';
 
 @Component({
   selector: 'app-individual-upsert',
@@ -22,7 +23,7 @@ export class IndividualUpsertComponent {
   status = status;
 
   @Input() upsertIndividual: Individual = new Individual();
-  @Input() entrancePortal: number = 0;
+   @Input() allPortalNavigation: number[] = [];
   @Input() dropdownDto: DropdownDto[] = [];
   
   @Output() goToNextPortal = new EventEmitter<number>();
@@ -47,7 +48,8 @@ export class IndividualUpsertComponent {
 
   isUpdate: boolean = false;
 
-  DataFromatting: DataFormatting = new DataFormatting();
+  DataFormatting: DataFormatting = new DataFormatting();
+  navigation = Navigation;
 
   constructor(private individualService: IndividualService) {
   }
@@ -135,7 +137,8 @@ export class IndividualUpsertComponent {
   Cancel(){
     // Do Reset followed by returning to previous screen
     this.Reset();
-    this.goToNextPortal.emit(this.entrancePortal);
+    var returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
+    this.goToNextPortal.emit(returnPortal);
   }
 
   GetChosenType() : void{

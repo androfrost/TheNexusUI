@@ -4,12 +4,12 @@
     <div class="portal-body">
         <div class="row">
             <div class="col-5">
-                <select class="drop-secid" id="drop-secid" (change)="searchLookupList()" [(ngModel)]="lookupSecondaryId">
+                <select class="drop-secid" id="drop-secid" (change)="filterSearchLookupList()" [(ngModel)]="lookupSecondaryId" [disabled]="isDisabled">
                     <option *ngFor="let id of secondIds; let i = index" [value]="i">{{ id.name }}</option>
                 </select>
             </div>
             <div class="col-7">
-                <input type="text" [(ngModel)]="lookupTerm" placeholder="Enter search term" (ngModelChange) = "searchLookupList()">
+                <input type="text" [(ngModel)]="lookupTerm" placeholder="Enter search term" (ngModelChange) = "filterSearchLookupList()">
             </div>
             <div class="col-12">
                 <table class="table table-striped">
@@ -28,6 +28,6 @@
         </div>
     </div>
     <div class="portal-footer text-center">
-        <button class="bottom-docked-buttons" (click)="TraversePortal(this.entrancePortal)">Return</button>
+        <button class="bottom-docked-buttons" (click)="Cancel()">Return</button>
     </div>
 </div>
