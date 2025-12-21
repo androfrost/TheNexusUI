@@ -23,7 +23,7 @@ export class IndividualUpsertComponent {
   status = status;
 
   @Input() upsertIndividual: Individual = new Individual();
-   @Input() allPortalNavigation: number[] = [];
+  @Input() allPortalNavigation: number[] = [];
   @Input() dropdownDto: DropdownDto[] = [];
   
   @Output() goToNextPortal = new EventEmitter<number>();
@@ -100,7 +100,7 @@ export class IndividualUpsertComponent {
     this.upsertIndividual.individualTypeId = this.individualTypeOption;
     this.upsertIndividual.sexId = this.sexOption;
     this.upsertIndividual.dateOfBirth = this.dateOfBirthDate; 
-    this.upsertIndividual.familyId = this.familyOption;
+    this.upsertIndividual.familyId = this.families[this.familyOption].id;
     this.upsertIndividual.locationId = this.locationOption;
     this.upsertIndividual.phoneNumberId = this.phoneNumberOption;
     // Call appropriate service function based on add vs update
