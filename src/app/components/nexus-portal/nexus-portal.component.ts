@@ -14,7 +14,7 @@ import { IndividualService } from '../../services/individual.service';
 import { FamilyService } from '../../services/family.service';
 
 import { Individual } from '../../models/individual';
-import { Subject, interval, Subscription } from 'rxjs';
+import { Subject, interval, Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Optional } from '@angular/core';
 import { Family } from '../../models/family';
@@ -34,7 +34,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
 
   portal = portal;
   portalState: number = 0;
-  newPortalState: number = portal.IndividualUpsert;
+  previousPortalState: number = 0; //portal.IndividualUpsert;
+  allPortalStates: number[] = [];
   private intervalId: any;
   private destroyed$ = new Subject<void>();
   private pollingSubscription?: Subscription;
@@ -64,7 +65,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   }
 
   activatePortal(portalId: number) : void{
-    this.portalState = portalId;
+    this.setPortalStates(portalId);
     // Start polling when entering the IndividualLookup or FamilyLookup portal, stop when leaving
     if (portalId === portal.IndividualLookup || portalId === portal.FamilyLookup || portalId === portal.IndividualUpsert) {
       this.startPolling(portalId);
@@ -80,8 +81,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     }
 
     // decide fetch observable and initial loading flag depending on portal
-    let fetchFn: () => any = () => Promise.resolve([]);
-    let fetchFn2: () => any = () => Promise.resolve([]);
+    let fetchFn: () => any = () => of([]);
+    let fetchFn2: () => any = () => of([]);
     let currentOrder: 'asc' | 'desc' | undefined;
     let orderField: 'id' | 'name' | undefined;
 
@@ -97,8 +98,9 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       }
       this.loadingFamily = true;
       fetchFn = () => this.familyService.getFamilies();
-    } else if (targetPortal === portal.IndividualUpsert) {
-      fetchFn = () => Promise.resolve([]);
+      fetchFn2 = () => of([]);
+    } else if (targetPortal === portal.IndividualUpsert || targetPortal === portal.FamilyUpsert) {
+      fetchFn = () => of([]);
       fetchFn2 = () => this.familyService.getFamilies();
     } else {
       // unsupported portal for polling
@@ -240,5 +242,11 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         return sortState.order === 'asc' ? compareResult : -compareResult;
       });
     }
+  }
+  
+  setPortalStates(portalId: number) : void {
+    this.previousPortalState = this.portalState;
+    this.portalState = portalId;
+    this.allPortalStates.push(this.portalState);
   }
 }
