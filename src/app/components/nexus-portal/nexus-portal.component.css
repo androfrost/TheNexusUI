@@ -8,6 +8,15 @@
     justify-content: center; */
 }
 
+.main-title{
+  /* background-color:rgb(157, 155, 155); */
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgb(38, 38, 38);
+  text-shadow: 2px 2px 4px #000000;
+  margin-bottom: 1rem;
+}
+
  /* Nexus Add Individual CSS */
 input{
     width: 100%;
@@ -28,4 +37,79 @@ textarea{
 
 .individual-buttons {
     margin-top: auto;
+}
+
+/* Move background onto the .card.main element so the image is scoped to "main" */
+.card.main {
+  border-width: 0px;
+  position: relative;               /* required for the ::before overlay to position correctly */
+  overflow: hidden;                 /* prevent pseudo-element from escaping */
+  /* background image from assets */
+  background-image: url('../../assets/images/Nexus.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;           /* cover whole card */
+  background-position: center center;
+  /* remove 'fixed' if you want the image to scroll with the card */
+  background-attachment: scroll;
+  min-height: 100vh;                /* ensure it fills viewport */
+}
+
+/* optional: dimming overlay for better contrast */
+.card.main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.879); /* adjust opacity/color */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ensure main content sits above overlay */
+.card.main, .card.portal {
+  position: relative;
+  z-index: 1;
+}
+
+.portal {
+  /* background image for the portal */
+  background-image: url('../../assets/images/Nexus.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  position: relative;        /* for overlay positioning */
+  min-height: 320px;         /* ensure the portal is tall enough to show the image */
+  padding-bottom: 64px;      /* reserve space so footer buttons don't overlap image content */
+  color: #fff;               /* optional: improves contrast on dark images */
+}
+
+/* optional dim overlay for contrast */
+.portal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.133); /* adjust darkness */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ensure portal content sits above the overlay */
+.portal > .portal-body,
+.portal > .card-title,
+.portal > .portal-footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* center portal content vertically if desired */
+.card.portal.portal-center .portal-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertical center */
+  align-items: center;     /* horizontal center */
+  min-height: 220px;
+}
+
+/* responsive tweak: reduce min-height on small screens */
+@media (max-width: 576px) {
+  .card.portal { min-height: 220px; padding-bottom: 72px; }
 }
