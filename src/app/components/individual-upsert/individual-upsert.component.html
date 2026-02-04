@@ -19,7 +19,7 @@
         </div>
         <div class="col-12 col-sm-6">
             <select class="drop-typ" id="drop-typ" (change)="GetChosenType()" [(ngModel)]="individualTypeOption">
-                <option *ngFor="let type of individualTypes; let i = index" [value]="i">{{ type }}</option>
+                <option *ngFor="let type of individualTypes; let i = index" [value]="i">{{ type.name }}</option>
             </select>
         </div>
     </div>
@@ -67,10 +67,20 @@
             Location
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-loc" id="drop-loc" (change)="GetChosenLocation()" [(ngModel)]="locationOption">
-                <option *ngFor="let location of locations; let i = index" [value]="i">{{ location }}</option>
-            </select>
-        </div>
+            <div class="row">
+                <div class="col-9 col-sm-7">
+                    <select class="drop-loc" id="drop-loc" (change)="GetChosenLocation()" [(ngModel)]="locationOption">
+                        <option *ngFor="let location of locations; let i = index" [value]="i">{{ location.name }}</option>
+                    </select>
+                </div>
+                <div class="col-1 col-sm-2">
+                    <button class="btn-func btn-plus" (click)="goToNextPortal.emit(portal.LocationUpsert)" ><img src="../../assets/images/Add.jpg" width="20" alt="Add"></button>
+                </div>
+                <div class="col-1 col-sm-2">
+                    <button class="btn-func btn-edit" (click)="TraversePortal(portal.LocationLookup)" ><img src="../../assets/images/Edit.jpg" width="20" alt="Edit"></button>
+                </div>
+            </div>
+        </div>    
     </div>
     <hr>
     <div class="row">

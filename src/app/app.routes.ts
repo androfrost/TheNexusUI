@@ -6,6 +6,8 @@ import { FamilyUpsertComponent } from './components/family-upsert/family-upsert.
 import { IndividualOptionsComponent } from './components/individual-options/individual-options.component';
 import { IndividualLookupComponent } from './components/individual-lookup/individual-lookup.component';
 import { FamilyOptionsComponent } from './components/family-options/family-options.component';
+import { LocationUpsertComponent } from './components/location-upsert/location-upsert.component';
+import { OptionsComponent } from './components/options/options.component';
 
 export const routes: Routes = [
   {
@@ -26,6 +28,12 @@ export const routes: Routes = [
   },{
     path: 'family-upsert',
     component: FamilyUpsertComponent
+  },{
+    path: 'location-upsert',
+    component: LocationUpsertComponent
+  },{
+    path: 'options',
+    component: OptionsComponent
   }
 ];
 @NgModule({

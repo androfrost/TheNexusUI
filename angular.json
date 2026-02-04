@@ -24,7 +24,13 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              {
+                "glob": "**/*",
+                "input": "src/app/assets",
+                "output": "assets"
+              },
+              "src/app/assets/images"
             ],
             "styles": [
               "src/styles.css"
