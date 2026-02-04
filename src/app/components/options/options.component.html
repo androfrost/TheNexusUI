@@ -1,0 +1,15 @@
+<div class="card portal">
+    <div class="card-title"><b>{{ optionName }} Menu</b></div>
+    <hr>
+    <div class="portal-body">
+        <div class="row">
+            <div class="col-12" *ngFor="let buttonName of optionButtonNames; let i = index">
+                <button (click)="TraversePortal(optionButtonPortals[i])">{{ buttonName }}</button>
+            </div>
+            <hr>
+        </div>
+    </div>
+    <div class="portal-footer text-center">
+        <button class="bottom-docked-buttons" (click)="TraversePortal(this.entrancePortal)">Return</button>
+    </div>
+</div>

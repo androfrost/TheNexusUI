@@ -1,8 +1,8 @@
 export class Location{
     locationId: number = 0;
-    familyId: number = 0;
+    locationName: string = "";
     address: string = "";
     city: string = "";
     state: string = "";
-    zipCode: string = "";
+    zip: string = "";
 }

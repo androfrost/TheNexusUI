@@ -12,6 +12,9 @@ import { IndividualLookupComponent } from "../individual-lookup/individual-looku
 import { LookupDto } from '../../models/dto/lookup-dto'; // Update the path as needed
 import { IndividualService } from '../../services/individual.service';
 import { FamilyService } from '../../services/family.service';
+import { LocationService } from '../../services/location.service';
+import { LocationUpsertComponent } from '../location-upsert/location-upsert.component';
+import { OptionsComponent } from '../options/options.component';
 
 import { Individual } from '../../models/individual';
 import { Subject, interval, Subscription, of } from 'rxjs';
@@ -20,17 +23,21 @@ import { Optional } from '@angular/core';
 import { Family } from '../../models/family';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
 import { SortState } from '../../enum/sort-state';
-
+import { Location } from '../../models/location';
+import { IndividualLocation } from '../../models/individual-location';
+import { IndividualTypeService } from '../../services/individual-type.service';
 @Component({
   selector: 'app-nexus-portal',
   standalone: true,
   imports: [CommonModule, FormsModule, IndividualOptionsComponent, IndividualUpsertComponent,
-    MainMenuComponent, FamilyUpsertComponent, IndividualLookupComponent, FamilyOptionsComponent],
+    MainMenuComponent, FamilyUpsertComponent, IndividualLookupComponent, FamilyOptionsComponent,
+    LocationUpsertComponent, OptionsComponent],
   templateUrl: './nexus-portal.component.html',
   styleUrl: './nexus-portal.component.css',
   providers: [IndividualService]
 })
 export class NexusPortalComponent implements OnInit, OnDestroy {
+  [x: string]: any;
 
   portal = portal;
   portalState: number = 0;
@@ -40,8 +47,11 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   private destroyed$ = new Subject<void>();
   private pollingSubscription?: Subscription;
   private pollingSubscription2?: Subscription = new Subscription();
+  private pollingSubscription3?: Subscription = new Subscription();
+  private pollingSubscription4?: Subscription = new Subscription();
   loadingLookup: boolean = false;
   loadingFamily: boolean = false;
+  loadingLocation: boolean = false;
 
   status = status;
   private currentSort?: SortState;
@@ -51,23 +61,32 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   individualMain: Individual = new Individual();
   familiesMain: Family[] = [];
   familyMain: Family = new Family();
+  locationsMain: Location[] = [];
+  locationMain: Location = new Location();
+  individualLocationsMain: IndividualLocation[] = [];
+  individualLocationMain: IndividualLocation = new IndividualLocation();
 
   dropdownDtoMain: DropdownDto[] = [];
+  dropdownDtoLocationMain: DropdownDto[] = [];
+  dropdownDtoIndividualTypeMain: DropdownDto[] = [];
 
   constructor(private cdr: ChangeDetectorRef, private individualService: IndividualService,
-    private familyService: FamilyService)
+    private familyService: FamilyService, private locationService: LocationService,
+    private individualTypeService: IndividualTypeService)
   {
-
   }
 
   ngOnInit(): void {
     // Polling was removed; we fetch data once when the portal is activated.
+
   }
 
   activatePortal(portalId: number) : void{
     this.setPortalStates(portalId);
     // Start polling when entering the IndividualLookup or FamilyLookup portal, stop when leaving
-    if (portalId === portal.IndividualLookup || portalId === portal.FamilyLookup || portalId === portal.IndividualUpsert) {
+    if (portalId === portal.IndividualLookup || portalId === portal.FamilyLookup || portalId === portal.IndividualUpsert
+      || portalId === portal.LocationLookup || portalId === portal.LocationUpsert
+    ) {
       this.startPolling(portalId);
     } else {
       this.stopPolling();
@@ -75,14 +94,17 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   }
 
   private startPolling(targetPortal: number): void {
+    // if (this.portalState !== targetPortal && this.pollingSubscription) {
     if (this.pollingSubscription) {
       this.stopPolling();
-      return; // already polling for some portal
+      // return; // already polling for some portal
     }
 
     // decide fetch observable and initial loading flag depending on portal
     let fetchFn: () => any = () => of([]);
     let fetchFn2: () => any = () => of([]);
+    let fetchFn3: () => any = () => of([]);
+    let fetchFn4: () => any = () => of([]);
     let currentOrder: 'asc' | 'desc' | undefined;
     let orderField: 'id' | 'name' | undefined;
 
@@ -90,6 +112,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.loadingLookup = true;
       fetchFn = () => this.individualService.getIndividualsByStatusId(status.Active);
       fetchFn2 = () => this.familyService.getFamilies();
+      fetchFn3 = () => this.locationService.getLocations();
+      fetchFn4 = () => this.individualTypeService.getIndividualTypes();
     } else if (targetPortal === portal.FamilyLookup) {
       // familyService is injected optionally; if not available log and stop
       if (!this.familyService || typeof this.familyService.getFamilies !== 'function') {
@@ -99,9 +123,20 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.loadingFamily = true;
       fetchFn = () => this.familyService.getFamilies();
       fetchFn2 = () => of([]);
-    } else if (targetPortal === portal.IndividualUpsert || targetPortal === portal.FamilyUpsert) {
+    } else if (targetPortal === portal.LocationLookup) {
+      // locationService is injected optionally; if not available log and stop
+      if (!this.locationService || typeof this.locationService.getLocations !== 'function') {
+        console.warn('Location service not available. Cannot start location polling.');
+        return;
+      }
+      this.loadingLocation = true;
+      fetchFn = () => this.locationService.getLocations();
+      fetchFn2 = () => of([]);
+    } else if (targetPortal === portal.IndividualUpsert || targetPortal === portal.FamilyUpsert || targetPortal === portal.LocationUpsert) {
       fetchFn = () => of([]);
       fetchFn2 = () => this.familyService.getFamilies();
+      fetchFn3 = () => this.locationService.getLocationsByIndividualId(this.individualMain.individualId);
+      fetchFn4 = () => this.individualTypeService.getIndividualTypes();
     } else {
       // unsupported portal for polling
       return;
@@ -112,10 +147,10 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.lookupDtoMain = [];
       
       for (const item of result || []) {
-        const id = item.individualId ?? item.familyId ?? item.id ?? 0;
+        const id = item.individualId ?? item.familyId ?? item.id ?? item.locationId ?? 0;
         const secondId = item.familyId ?? item.secondId ?? 0;
-        const name = item.firstName ? `${item.firstName} ${item.lastName ?? ''}`.trim()
-                     : item.familyName ?? item.name ?? '';
+        const name = item.firstName ? `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim()
+                     : item.familyName ?? item.name ?? item.locationName ?? '';
         this.lookupDtoMain.push({ id, secondId, name });
       }
 
@@ -133,6 +168,9 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       } else if (targetPortal === portal.FamilyLookup) {
         this.familiesMain = result as Family[];
         this.loadingFamily = false;
+      } else if (targetPortal === portal.LocationLookup) {
+        this.locationsMain = result as Location[];
+        this.loadingLocation = false;
       }
       
       // Apply current sort if exists
@@ -141,7 +179,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
           const compareResult = a[this.currentSort!.field] > b[this.currentSort!.field] ? 1 : -1;
           return this.currentSort!.order === 'asc' ? compareResult : -compareResult;
         });
-      }
+      };
 
       // trigger change detection if needed
       this.cdr.markForCheck?.();
@@ -157,6 +195,34 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
                      : item.familyName ?? item.name ?? '';
         this.dropdownDtoMain.push({ id, name });
       }
+      // trigger change detection if needed
+      this.cdr.markForCheck?.();
+    };
+
+    const handleResult3 = (result: any[]) => {
+      // Normalize results into LookupDto[]
+      this.dropdownDtoLocationMain = [];
+
+      for (const item of result || []) {
+        const id = item.locationId ?? item.individualId ?? item.id ?? 0;
+        const locationName = item.locationName ? `${item.locationName} - ` : '';
+        const name = `${locationName} ${item.address ?? ''} ${item.city ?? ''}  ${item.state ?? ''} ${item.zip ?? ''}`.trim();
+        this.dropdownDtoLocationMain.push({ id, name });
+      }
+
+      // trigger change detection if needed
+      this.cdr.markForCheck?.();
+    };
+
+    const handleResult4 = (result: any[]) => {
+      // Normalize results into LookupDto[]
+      this.dropdownDtoIndividualTypeMain = [];
+
+      for (const item of result || []) {
+        const id = item.individualTypeId ?? item.id ?? 0;
+        const name = item.individualTypeName ?? item.name ?? '';
+        this.dropdownDtoIndividualTypeMain.push({ id, name });
+      }
 
       // trigger change detection if needed
       this.cdr.markForCheck?.();
@@ -168,11 +234,20 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       () => {
         if (targetPortal === portal.IndividualLookup) this.loadingLookup = false;
         if (targetPortal === portal.FamilyLookup) this.loadingFamily = false;
+        if (targetPortal === portal.LocationLookup) this.loadingLocation = false;
       }
     );
 
     fetchFn2().subscribe(
       (res: any[]) => handleResult2(res), () =>{}
+    );
+
+    fetchFn3().subscribe(
+      (res: any[]) => handleResult3(res), () =>{}
+    );
+
+    fetchFn4().subscribe(
+      (res: any[]) => handleResult4(res), () =>{}
     );
 
     // periodic polling (cancels previous in-flight via switchMap)
@@ -196,6 +271,28 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       });
     }
 
+    // periodic polling for tertiary fetch function (fetchFn3)
+    if (fetchFn3){
+      this.pollingSubscription3 = interval(1000)
+        .pipe(
+          switchMap(() => fetchFn3())
+        )
+        .subscribe((value) => handleResult3(value as any[]), (err) => {
+          console.error('Polling error for tertiary fetch', err);
+        });
+    }
+
+    // periodic polling for quaternary fetch function (fetchFn4)
+    if (fetchFn4){
+      this.pollingSubscription4 = interval(1000)
+        .pipe(
+          switchMap(() => fetchFn4())
+        )
+        .subscribe((value) => handleResult4(value as any[]), (err) => {
+          console.error('Polling error for quaternary fetch', err);
+        });
+    }
+
   }
 
   private stopPolling(): void {
@@ -206,6 +303,14 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     if (this.pollingSubscription2) {
       this.pollingSubscription2.unsubscribe();
       this.pollingSubscription2 = undefined;
+    }
+    if (this.pollingSubscription3) {
+      this.pollingSubscription3.unsubscribe();
+      this.pollingSubscription3 = undefined;
+    }
+    if (this.pollingSubscription4) {
+      this.pollingSubscription4.unsubscribe();
+      this.pollingSubscription4 = undefined;
     }
   }
 
@@ -225,12 +330,15 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.individualMain = this.individualsMain.find(ind => ind.individualId === $event.id) || new Individual();
     if (this.portalState === portal.FamilyLookup)
       this.familyMain = this.familiesMain.find(fam => fam.familyId === $event.id) || new Family();
+    if (this.portalState === portal.LocationLookup)
+      this.locationMain = this.locationsMain.find(loc => loc.locationId === $event.id) || new Location();
 
   }
 
   resetData() {
     this.individualMain = new Individual();
     this.familyMain = new Family();
+    this.locationMain = new Location();
     return true;
   }
 
@@ -249,5 +357,9 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     this.previousPortalState = this.portalState;
     this.portalState = portalId;
     this.allPortalStates.push(this.portalState);
+  }
+
+  returnIndividualTypes(): DropdownDto[] {
+    return this.dropdownDtoIndividualTypeMain;
   }
 }

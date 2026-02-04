@@ -113,3 +113,8 @@ hr {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+.btn-func:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}

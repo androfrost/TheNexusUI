@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges, OnChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Individual } from '../../models/individual';
 import { status } from '../../enum/status';
@@ -18,27 +18,31 @@ import { Navigation } from '../../helpers/navigation';
   styleUrl: './individual-upsert.component.css',
   providers: [IndividualService]
 })
-export class IndividualUpsertComponent {
+export class IndividualUpsertComponent implements OnChanges{
 
   status = status;
 
   @Input() upsertIndividual: Individual = new Individual();
   @Input() allPortalNavigation: number[] = [];
   @Input() dropdownDto: DropdownDto[] = [];
+  @Input() locationDropdownDto: DropdownDto[] = [];
+  @Input() individualTypeDropdownDto: DropdownDto[] = [];
   
   @Output() goToNextPortal = new EventEmitter<number>();
+  @Output() selectedItemChange = new EventEmitter<boolean>();
 
-  families: DropdownDto[] =  this.dropdownDto
-  familyOption: number = this.upsertIndividual.familyId;
-  firstName: string = this.upsertIndividual.firstName;
-  lastName: string = this.upsertIndividual.lastName;
-  individualTypes: string[] =  ["Choose Type","Person", "Animal"];
+  families: DropdownDto[] =  [];
+  familyOption: number = 0;
+  firstName: string = '';
+  lastName: string = '';
+  individualTypes: DropdownDto[] = []   //["Choose Type","Person", "Animal"];
   individualTypeOption: number = 0;
   sexes: string[] =  ["Choose Sex","Male", "Female"];
   sexOption: number = 0;
   dateOfBirthDate: Date = this.upsertIndividual.dateOfBirth;
   dateOfBirthString: string = this.dateOfBirthDate.toISOString();
-  locations: string[] =  ["Choose Address","123 Fake Street", "321 Real Street","2828 Squarehill Dr"];
+  locations: DropdownDto[] =  this.locationDropdownDto;
+
   locationOption: number = 0;
   phoneNumbers: string[] =  ["Choose Phone Number","123-456-7890"];
   phoneNumberOption: number = 0;
@@ -50,6 +54,7 @@ export class IndividualUpsertComponent {
 
   DataFormatting: DataFormatting = new DataFormatting();
   navigation = Navigation;
+  portal = portal;
 
   constructor(private individualService: IndividualService) {
   }
@@ -69,27 +74,51 @@ export class IndividualUpsertComponent {
     this.lastName = this.upsertIndividual.lastName;
     this.description = this.upsertIndividual.individualDescription;
     this.statusOption = this.upsertIndividual.statusId;
-    this.individualTypeOption = this.upsertIndividual.individualTypeId;
+    // this.individualTypeOption will be set in ngOnChanges
     this.sexOption = this.upsertIndividual.sexId;
     this.dateOfBirthDate = this.upsertIndividual.dateOfBirth;
-    this.familyOption = this.upsertIndividual.familyId;
+    this.SetChosenFamily(this.upsertIndividual.familyId);
     this.locationOption = this.upsertIndividual.locationId;
     this.phoneNumberOption = this.upsertIndividual.phoneNumberId;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-      if (changes['dropdownDto']) {
-        // Parent updated the dropdownDto input (e.g. async fetch completed)
-        this.families = [];
-        for(const item of this.dropdownDto) 
-          this.families.push(item);
-        
-        this.families.unshift({id: 0, name: "Choose Family"});
-      }
-      if (changes['upsertIndividual'] && this.upsertIndividual?.dateOfBirth) {
-        this.dateOfBirthString = DataFormatting.formatForInput(this.upsertIndividual.dateOfBirth);
+ngOnChanges(changes: SimpleChanges): void {
+    if (changes['dropdownDto']) {
+      this.families = Array.isArray(this.dropdownDto) ? [...this.dropdownDto] : [];
+      if (!this.families.find(f => f.id === 0)) {
+        this.families.unshift({ id: 0, name: 'Choose Family' } as DropdownDto);
       }
     }
+
+    if (changes['locationDropdownDto']) {
+      this.locations = Array.isArray(this.locationDropdownDto) ? [...this.locationDropdownDto] : [];
+      if (!this.locations.find(l => l.id === 0)) {
+        this.locations.unshift({ id: 0, name: 'Choose Location' } as DropdownDto);
+      }
+    }
+
+    if (changes['individualTypeDropdownDto']) {
+      this.individualTypes = Array.isArray(this.individualTypeDropdownDto) ? [...this.individualTypeDropdownDto] : [];
+      if (!this.individualTypes.find(t => t.id === 0)) {
+        this.individualTypes.unshift({ id: 0, name: 'Choose Type' } as DropdownDto);
+      }
+    }
+
+    if (changes['upsertIndividual'] && this.upsertIndividual) {
+      this.familyOption = this.upsertIndividual.familyId ?? 0;
+      this.firstName = this.upsertIndividual.firstName ?? '';
+      this.lastName = this.upsertIndividual.lastName ?? '';
+      // if you have a date string property, set it here (e.g. dateOfBirthString)
+      this.dateOfBirthString = DataFormatting.formatForInput(this.upsertIndividual.dateOfBirth);
+      // Set individualTypeOption based on id
+      this.individualTypeOption = this.individualTypes.findIndex(t => t.id === this.upsertIndividual.individualTypeId) || 0;
+    }
+  }
+
+  TraversePortal(portalId: number) : void{
+    this.goToNextPortal.emit(portalId);
+    this.selectedItemChange.emit(true);
+  }
 
   Save(){
     // Set Individual object values to save
@@ -97,7 +126,7 @@ export class IndividualUpsertComponent {
     this.upsertIndividual.lastName = this.lastName;
     this.upsertIndividual.individualDescription = this.description;
     this.upsertIndividual.statusId = this.statusOption;
-    this.upsertIndividual.individualTypeId = this.individualTypeOption;
+    this.upsertIndividual.individualTypeId = this.individualTypes[this.individualTypeOption].id;
     this.upsertIndividual.sexId = this.sexOption;
     this.upsertIndividual.dateOfBirth = this.dateOfBirthDate; 
     this.upsertIndividual.familyId = this.families[this.familyOption].id;
@@ -143,12 +172,12 @@ export class IndividualUpsertComponent {
 
   GetChosenType() : void{
     let chosenType = document.getElementById("drop-typ") as HTMLSelectElement;
-    this.sexOption = chosenType.selectedIndex;
+    this.individualTypeOption = chosenType.selectedIndex;
   }
 
   SetChosenType(typeId: number) : void{
     let chosenType = document.getElementById("drop-typ") as HTMLSelectElement;
-    chosenType.selectedIndex = typeId;
+    chosenType.selectedIndex = this.individualTypeOption;
   }
   
   GetChosenSex() : void{

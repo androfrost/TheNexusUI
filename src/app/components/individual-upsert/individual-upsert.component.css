@@ -1,0 +1,30 @@
+.drop-loc{
+    width: 100%;
+    margin: 0px;
+}
+
+.btn-plus, .btn-edit {
+    font-size: 10px;
+    margin: 2px, 2px, 2px, 2px;
+    width: 60%;
+    height: 25px;
+    text-align: center;
+    overflow: hidden;
+
+    display: flex;                 /* Use flexbox for alignment */
+    align-items: center;           /* Vertically center content */
+    justify-content: center;       /* Horizontally center content */
+    padding: 10px 20px;
+    border: 2px solid #007BFF;
+    border-radius: 10px;           /* Rounded corners */
+    /* background-color: #007BFF; */
+    color: black;
+    cursor: pointer;
+    gap: 8px;                      /* Space between image and text if text exists */
+}
+
+img {
+    /* max-width: 100%; */
+    object-fit: contain;
+    align-items: center;
+}

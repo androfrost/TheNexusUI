@@ -2,26 +2,29 @@
     <div class="card main">
         <div class="row main-row">
             <div class="col-sm-4 col-12 nexus-ready">
-                <div *ngIf="portalState === portal.NexusPortal" >     
+                <div *ngIf="portalState === portal.NexusPortal">
                     <div class="row portal portal-center">
                         <div class="main-title col-12 justify-content-center text-center">
-                            <h1>The Nexus</h1> 
+                            <h1>The Nexus</h1>
                         </div>
                         <div class="col-12 justify-content-center text-center">
                             <button class="bottom-docked-buttons" (click)="activatePortal(portal.ChoosePortal)">Ready</button>
                         </div>
                     </div>
                 </div>
+
                 <div *ngIf="portalState === portal.ChoosePortal">
-                    <app-main-menu (goToNextPortal)=activatePortal($event)></app-main-menu>
+                    <app-main-menu (goToNextPortal)="activatePortal($event)"></app-main-menu>
                 </div>
+
                 <div *ngIf="portalState === portal.FamilyUpsert">
                     <app-family-upsert 
                         [allPortalNavigation] =     allPortalStates
-                        [upsertFamily] =            this.familyMain 
+                        [upsertFamily] =            familyMain
                         (goToNextPortal) =          activatePortal($event)
                     ></app-family-upsert>
                 </div>
+
                 <div *ngIf="portalState === portal.IndividualOptions">
                     <app-individual-options 
                         [entrancePortal] =          portal.ChoosePortal 
@@ -29,14 +32,18 @@
                         (selectedItemChange) =      resetData()
                     ></app-individual-options>
                 </div>
+
                 <div *ngIf="portalState === portal.IndividualUpsert">
                     <app-individual-upsert 
-                        [allPortalNavigation] =     allPortalStates
-                        [dropdownDto] =             dropdownDtoMain
-                        [upsertIndividual] =        this.individualMain
-                        (goToNextPortal) =          activatePortal($event)>
+                        [allPortalNavigation] =         allPortalStates
+                        [dropdownDto] =                 dropdownDtoMain
+                        [locationDropdownDto] =         dropdownDtoLocationMain
+                        [individualTypeDropdownDto] =   dropdownDtoIndividualTypeMain
+                        [upsertIndividual] =            individualMain
+                        (goToNextPortal) =              activatePortal($event)>
                     </app-individual-upsert>
                 </div>
+
                 <div *ngIf="portalState === portal.IndividualLookup">
                     <ng-container *ngIf="!loadingLookup; else loadingTpl">
                         <app-individual-lookup 
@@ -44,7 +51,7 @@
                             [lookupDto] =           lookupDtoMain
                             [dropdownDto] =         dropdownDtoMain
                             [lookupPortal] =        portal.IndividualUpsert
-                            [filteredSecondaryId] = this.familyMain.familyId
+                            [filteredSecondaryId] = familyMain.familyId
                             (goToNextPortal) =      activatePortal($event)
                             (selectedItemChange) =  onSelectedItemChange($event)
                             (sortChange) =          updateSort($event)
@@ -59,6 +66,7 @@
                         </div>
                     </ng-template>
                 </div>
+
                 <div *ngIf="portalState === portal.FamilyOptions">
                     <app-family-options 
                         [entrancePortal] =          portal.ChoosePortal 
@@ -66,6 +74,7 @@
                         (selectedItemChange) =      resetData()
                     ></app-family-options>
                 </div>
+
                 <div *ngIf="portalState === portal.FamilyLookup">
                     <ng-container *ngIf="!loadingFamily; else loadingFamilyTpl">
                         <app-individual-lookup  
@@ -86,6 +95,48 @@
                             </div>
                         </div>
                     </ng-template>
+                </div>
+
+                <div *ngIf="portalState === portal.LocationUpsert">
+                    <app-location-upsert 
+                        [allPortalNavigation] =         allPortalStates
+                        [upsertLocation] =              locationMain
+                        [individualId] =                individualMain.individualId
+                        (goToNextPortal) =              activatePortal($event)>
+                    </app-location-upsert>
+                </div>
+
+                <div *ngIf="portalState === portal.LocationLookup">
+                    <ng-container *ngIf="!loadingLocation; else loadingLocationTpl">
+                        <app-individual-lookup  
+                            [allPortalNavigation] = allPortalStates
+                            [lookupDto] =           lookupDtoMain
+                            [lookupPortal] =        portal.LocationUpsert
+                            
+                            (goToNextPortal) =      activatePortal($event)
+                            (selectedItemChange) =  onSelectedItemChange($event)
+                            (sortChange) =          updateSort($event)
+                        ></app-individual-lookup>
+                    </ng-container>
+                    <ng-template #loadingLocationTpl>
+                        <div class="card portal">
+                            <div class="card-title"><b>Loading Locations...</b></div>
+                            <div class="spinner-wrapper">
+                                <div class="spinner" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+
+                <div *ngIf="portalState === portal.LocationOptions">
+                    <app-options
+                        [entrancePortal]="portal.ChoosePortal"
+                        [optionName]="'Location'"
+                        [optionButtonNames]="['Add Location','Find Location']"
+                        [optionButtonPortals]="[portal.LocationUpsert, portal.LocationLookup]"
+                        (goToNextPortal)="activatePortal($event)"
+                        (selectedItemChange)="resetData()">
+                    </app-options>
                 </div>
             </div>
         </div>

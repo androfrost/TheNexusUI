@@ -6,5 +6,8 @@ export enum portal{
     FamilyLookup,
     IndividualOptions,
     IndividualUpsert,
-    IndividualLookup
+    IndividualLookup,
+    LocationOptions,
+    LocationUpsert,
+    LocationLookup
 }
