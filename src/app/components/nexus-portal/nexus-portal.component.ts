@@ -4,10 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IndividualUpsertComponent } from "../individual-upsert/individual-upsert.component";
 import { portal } from '../../enum/portal';
 import { status } from '../../enum/status';
-import { MainMenuComponent } from "../main-menu/main-menu.component";
 import { FamilyUpsertComponent } from "../family-upsert/family-upsert.component";
-import { FamilyOptionsComponent } from '../family-options/family-options.component';
-import { IndividualOptionsComponent } from "../individual-options/individual-options.component";
 import { IndividualLookupComponent } from "../individual-lookup/individual-lookup.component";
 import { LookupDto } from '../../models/dto/lookup-dto'; // Update the path as needed
 import { IndividualService } from '../../services/individual.service';
@@ -19,7 +16,6 @@ import { OptionsComponent } from '../options/options.component';
 import { Individual } from '../../models/individual';
 import { Subject, interval, Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Optional } from '@angular/core';
 import { Family } from '../../models/family';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
 import { SortState } from '../../enum/sort-state';
@@ -29,8 +25,8 @@ import { IndividualTypeService } from '../../services/individual-type.service';
 @Component({
   selector: 'app-nexus-portal',
   standalone: true,
-  imports: [CommonModule, FormsModule, IndividualOptionsComponent, IndividualUpsertComponent,
-    MainMenuComponent, FamilyUpsertComponent, IndividualLookupComponent, FamilyOptionsComponent,
+  imports: [CommonModule, FormsModule, IndividualUpsertComponent,
+    FamilyUpsertComponent, IndividualLookupComponent,
     LocationUpsertComponent, OptionsComponent],
   templateUrl: './nexus-portal.component.html',
   styleUrl: './nexus-portal.component.css',
