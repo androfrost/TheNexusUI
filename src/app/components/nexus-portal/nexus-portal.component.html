@@ -14,7 +14,15 @@
                 </div>
 
                 <div *ngIf="portalState === portal.ChoosePortal">
-                    <app-main-menu (goToNextPortal)="activatePortal($event)"></app-main-menu>
+                    <!-- <app-main-menu (goToNextPortal)="activatePortal($event)"></app-main-menu> -->
+                    <app-options
+                        [entrancePortal]="portal.NexusPortal"
+                        [optionName]="'Main'"
+                        [optionButtonNames]="['Individual','Family','Location']"
+                        [optionButtonPortals]="[portal.IndividualOptions, portal.FamilyOptions, portal.LocationOptions]"
+                        (goToNextPortal)="activatePortal($event)"
+                        (selectedItemChange)="resetData()">
+                    </app-options>
                 </div>
 
                 <div *ngIf="portalState === portal.FamilyUpsert">
@@ -26,11 +34,19 @@
                 </div>
 
                 <div *ngIf="portalState === portal.IndividualOptions">
-                    <app-individual-options 
+                    <!-- <app-individual-options 
                         [entrancePortal] =          portal.ChoosePortal 
                         (goToNextPortal) =          activatePortal($event)
                         (selectedItemChange) =      resetData()
-                    ></app-individual-options>
+                    ></app-individual-options> -->
+                    <app-options
+                        [entrancePortal]="portal.ChoosePortal"
+                        [optionName]="'Individual'"
+                        [optionButtonNames]="['Add Individual','Find Individual']"
+                        [optionButtonPortals]="[portal.IndividualUpsert, portal.IndividualLookup]"
+                        (goToNextPortal)="activatePortal($event)"
+                        (selectedItemChange)="resetData()">
+                    </app-options>
                 </div>
 
                 <div *ngIf="portalState === portal.IndividualUpsert">
@@ -68,11 +84,19 @@
                 </div>
 
                 <div *ngIf="portalState === portal.FamilyOptions">
-                    <app-family-options 
+                    <!-- <app-family-options 
                         [entrancePortal] =          portal.ChoosePortal 
                         (goToNextPortal) =          activatePortal($event)
                         (selectedItemChange) =      resetData()
-                    ></app-family-options>
+                    ></app-family-options> -->
+                    <app-options
+                        [entrancePortal]="portal.ChoosePortal"
+                        [optionName]="'Family'"
+                        [optionButtonNames]="['Add Family','Find Family']"
+                        [optionButtonPortals]="[portal.FamilyUpsert, portal.FamilyLookup]"
+                        (goToNextPortal)="activatePortal($event)"
+                        (selectedItemChange)="resetData()">
+                    </app-options>
                 </div>
 
                 <div *ngIf="portalState === portal.FamilyLookup">
