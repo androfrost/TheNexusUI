@@ -6,7 +6,7 @@ import { LocationService } from '../../services/location.service';
 import { HttpClientModule } from '@angular/common/http';
 import { portal } from '../../enum/portal';
 import { Navigation } from '../../helpers/navigation';
-import { IndividualLocationDto } from '../../models/dto/individual-location-dto';
+import { IndividualLocationsDto } from '../../models/dto/individual-locations-dto';
 
 @Component({
   selector: 'app-location-upsert',
@@ -82,13 +82,13 @@ export class LocationUpsertComponent {
       });
     else
       if (this.individualId != 0){
-        var upsertIndividualLocation: IndividualLocationDto = new IndividualLocationDto();
+        var upsertIndividualLocation: IndividualLocationsDto = new IndividualLocationsDto();
         upsertIndividualLocation.individualId = this.individualId;
         upsertIndividualLocation.locationId = this.upsertLocation.locationId;
         upsertIndividualLocation.location = [this.upsertLocation];
         console.log('Calling AddIndividualToALocation with:', upsertIndividualLocation);
-        this.locationService.AddIndividualToALocation(upsertIndividualLocation).subscribe({
-          next: (result: IndividualLocationDto) => {
+        this.locationService.addIndividualToALocation(upsertIndividualLocation).subscribe({
+          next: (result: IndividualLocationsDto) => {
             console.log('AddIndividualToALocation success:', result);
             upsertIndividualLocation = result;
           },

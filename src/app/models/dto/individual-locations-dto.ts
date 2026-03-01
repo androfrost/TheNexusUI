@@ -1,6 +1,6 @@
-import { Location } from '../../models/location';
+import { Location } from '../location';
 
-export class IndividualLocationDto{
+export class IndividualLocationsDto{
     individualLocationId: number = 0;
     individualId: number = 0;
     locationId: number = 0;

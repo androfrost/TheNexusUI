@@ -3,7 +3,7 @@
     <hr>
     <div class="portal-body">
         <div class="row">
-            <div class="col-5">
+            <div class="col-5" *ngIf="dropdownDto.length > 1">
                 <select class="drop-secid" id="drop-secid" (change)="filterSearchLookupList()" [(ngModel)]="lookupSecondaryId" [disabled]="isDisabled">
                     <option *ngFor="let id of secondIds; let i = index" [value]="i">{{ id.name }}</option>
                 </select>
@@ -16,11 +16,15 @@
                     <thead>
                         <th (click)="OrderId()">ID</th>
                         <th (click)="OrderName()">Name</th>
+                        <th *ngIf="hasAssignedFlag">Assigned</th>
                     </thead>
                     <tbody class="table-group-divider">
                         <tr *ngFor="let item of lookupItems" (click)="SelectItem(item)">
                             <td class="id">{{ item.id }}</td>
                             <td class="name">{{ item.name }}</td>
+                            <div *ngIf="hasAssignedFlag" class="assigned-flag">
+                                <input type="checkbox" [(checked)]="item.isAssigned" (click)="ClickAssigned(item, $event)">
+                            </div>  
                         </tr>
                     </tbody>
                 </table>

@@ -4,9 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LookupDto } from '../../models/dto/lookup-dto';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
-import { Console } from 'console';
 import { SortState } from '../../enum/sort-state';
-import { lookup } from 'dns';
 import { Navigation } from '../../helpers/navigation';
 
 @Component({
@@ -26,12 +24,18 @@ export class IndividualLookupComponent implements OnChanges {
   @Input() dropdownDto: DropdownDto[] = []; // The full list of dropdown items passed from parent
   @Input() lookupPortal: number = 0; //
   @Input() filteredSecondaryId: number = 0;  
+  @Input() hasAssignedFlag: boolean = false; // To know whether to show the assigned/unassigned flags for items that have them (ex: Individuals in FamilyUpsert)
   
   @Output() goToNextPortal = new EventEmitter<number>();
   @Output() selectedItemChange = new EventEmitter<LookupDto>();
   @Output() sortChange = new EventEmitter<SortState>();
+  @Output() lookupDtoChange = new EventEmitter<LookupDto[]>(); // To send back updated lookup list with assigned/unassigned changes
+  @Output() assignedFlagChanges = new EventEmitter<{ id: number; isAssigned: boolean }[]>();
+
   private currentSortField?: 'id' | 'name';
   private currentSortOrder: 'asc' | 'desc' = 'asc';
+  private originalAssignedMap: Map<number, boolean> = new Map();
+  private assignedChangesMap: Map<number, boolean> = new Map();
 
   lookupTerm: string = "";
   lookupSecondaryId: number = 0;
@@ -47,24 +51,41 @@ export class IndividualLookupComponent implements OnChanges {
       this.isDisabled = true;
     }
     this.filterSearchLookupList();
+
+    this.secondIds = [];
+    for(const item of this.dropdownDto) 
+      this.secondIds.push(item);
+
+    this.secondIds.unshift({id: 0, name: "Choose Option"});
+
+    // Capture original assigned state so we can compute net changes
+    this.originalAssignedMap.clear();
+    for (const it of this.lookupDto) {
+      this.originalAssignedMap.set(it.id, !!it.isAssigned);
+    }
+    this.assignedChangesMap.clear();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['lookupDto']) {
-      // Reset sort state when new data arrives
-      this.currentSortField = undefined;
-      this.currentSortOrder = 'asc';
-      // Parent updated the lookupDto input (e.g. async fetch completed)
-      this.filterSearchLookupList();
-    }
-    if (changes['dropdownDto']) {
-      // Parent updated the dropdownDto input (e.g. async fetch completed)
-      this.secondIds = [];
-      for(const item of this.dropdownDto) 
-        this.secondIds.push(item);
+    // if (changes['lookupDto']) {
+    //   this.currentSortField = undefined;
+    //   this.currentSortOrder = 'asc';
+    //   this.filterSearchLookupList();
 
-      this.secondIds.unshift({id: 0, name: "Choose Option"});
-    }
+    //   // rebuild original assigned map for new input
+    //   this.originalAssignedMap.clear();
+    //   for (const it of this.lookupDto) {
+    //     this.originalAssignedMap.set(it.id, !!it.isAssigned);
+    //   }
+    //   this.assignedChangesMap.clear();
+    // }
+    // if (changes['dropdownDto']) {
+    //   this.secondIds = [];
+    //   for(const item of this.dropdownDto)
+    //     this.secondIds.push(item);
+
+    //   this.secondIds.unshift({id: 0, name: "Choose Option"});
+    // }
   }
 
   TraversePortal(portalId: number) : void{
@@ -129,5 +150,23 @@ export class IndividualLookupComponent implements OnChanges {
   SelectItem(item: LookupDto): void {
     this.selectedItemChange.emit(item);
     this.TraversePortal(this.lookupPortal);
+  }
+
+  ClickAssigned(item: LookupDto, $event: any): void {
+    $event.stopPropagation(); // To prevent the click from also selecting the item and traversing the portal
+    item.isAssigned = !item.isAssigned;
+    this.lookupDtoChange.emit(this.lookupDto); // Emit the updated lookupDto to the parent
+
+    const original = this.originalAssignedMap.get(item.id) || false;
+    if (item.isAssigned === original) {
+      // Net effect is no change relative to original
+      this.assignedChangesMap.delete(item.id);
+    } else {
+      // Record net change (assign or unassign)
+      this.assignedChangesMap.set(item.id, item.isAssigned);
+    }
+
+    const changesArray = Array.from(this.assignedChangesMap.entries()).map(([id, isAssigned]) => ({ id, isAssigned }));
+    this.assignedFlagChanges.emit(changesArray);
   }
 }
