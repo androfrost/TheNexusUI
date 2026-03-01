@@ -22,6 +22,9 @@ import { SortState } from '../../enum/sort-state';
 import { Location } from '../../models/location';
 import { IndividualLocation } from '../../models/individual-location';
 import { IndividualTypeService } from '../../services/individual-type.service';
+import { IndividualLocationsDtoService } from '../../services/individual-locations-dto.service';
+import { IndividualLocationsDto } from '../../models/dto/individual-locations-dto';
+import { IndividualLocationService } from '../../services/individual-location.service';
 @Component({
   selector: 'app-nexus-portal',
   standalone: true,
@@ -53,6 +56,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   private currentSort?: SortState;
 
   lookupDtoMain: LookupDto[] = [];
+  individualLocationDtoMain: IndividualLocationsDto = new IndividualLocationsDto();
+
   individualsMain: Individual[] = [];
   individualMain: Individual = new Individual();
   familiesMain: Family[] = [];
@@ -68,7 +73,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
 
   constructor(private cdr: ChangeDetectorRef, private individualService: IndividualService,
     private familyService: FamilyService, private locationService: LocationService,
-    private individualTypeService: IndividualTypeService)
+    private individualTypeService: IndividualTypeService, private individualLocationsDtoService: IndividualLocationsDtoService,
+  private individualLocationService: IndividualLocationService)
   {
   }
 
@@ -126,7 +132,10 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         return;
       }
       this.loadingLocation = true;
-      fetchFn = () => this.locationService.getLocations();
+      if  (this.individualMain && this.individualMain.individualId > 0)
+        fetchFn = () => this.locationService.getLocationsWithAssignedIndividualsByIndividualId(this.individualMain.individualId);
+      else
+        fetchFn = () => this.locationService.getLocations();
       fetchFn2 = () => of([]);
     } else if (targetPortal === portal.IndividualUpsert || targetPortal === portal.FamilyUpsert || targetPortal === portal.LocationUpsert) {
       fetchFn = () => of([]);
@@ -147,7 +156,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         const secondId = item.familyId ?? item.secondId ?? 0;
         const name = item.firstName ? `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim()
                      : item.familyName ?? item.name ?? item.locationName ?? '';
-        this.lookupDtoMain.push({ id, secondId, name });
+        const isAssigned = item.isAssigned ?? false;
+        this.lookupDtoMain.push({ id, secondId, name, isAssigned });
       }
 
       if (orderField && currentOrder) {
@@ -357,5 +367,50 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
 
   returnIndividualTypes(): DropdownDto[] {
     return this.dropdownDtoIndividualTypeMain;
+  }
+
+  shouldUseAssignedFlag(individualId: number): boolean {
+    return individualId > 0 ? true : false;
+  }
+
+  setAssignedFlagChanges(changes: { id: number, isAssigned: boolean }[]): void {
+    for (const change of changes) {
+      const item = this.lookupDtoMain.find(i => i.id === change.id);
+      if (item) {
+        item.isAssigned = change.isAssigned;
+        
+        // Handle backend operations for IndividualLocation
+        // Only process if we have a valid individual (when in context of individual management)
+        if (this.individualMain.individualId > 0) {
+          if (change.isAssigned) {
+            // Add the link: individual to location
+            const individualLocDto = new IndividualLocationsDto();
+            individualLocDto.individualId = this.individualMain.individualId;
+            individualLocDto.locationId = change.id; // location id from lookup
+            
+            this.locationService.addIndividualToALocation(individualLocDto).subscribe(
+              (result) => {
+                console.log(`Successfully linked Individual ${this.individualMain.individualId} to Location ${change.id}`);
+              },
+              (error) => {
+                console.error(`Failed to link Individual ${this.individualMain.individualId} to Location ${change.id}:`, error);
+              }
+            );
+          } else {
+            // Remove the link: individual from location
+            this.individualLocationService.deleteIndividualLocationByIndividualAndLocationId(this.individualMain.individualId, change.id).subscribe(
+              () => {
+                console.log(`Successfully unlinked Individual ${this.individualMain.individualId} from Location ${change.id}`);
+              },
+              (error) => {
+                console.error(`Failed to unlink Individual ${this.individualMain.individualId} from Location ${change.id}:`, error);
+              }
+            );
+          }
+        }
+      } else {
+        console.warn(`Item with id ${change.id} not found in lookupDtoMain to update assigned flag.`);  
+      }
+    }
   }
 }

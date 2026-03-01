@@ -71,6 +71,7 @@
                             (goToNextPortal) =      activatePortal($event)
                             (selectedItemChange) =  onSelectedItemChange($event)
                             (sortChange) =          updateSort($event)
+                            (assignedFlagChanges) = setAssignedFlagChanges($event)
                         ></app-individual-lookup>
                     </ng-container>
                     <ng-template #loadingTpl>
@@ -136,10 +137,12 @@
                             [allPortalNavigation] = allPortalStates
                             [lookupDto] =           lookupDtoMain
                             [lookupPortal] =        portal.LocationUpsert
+                            [hasAssignedFlag]=      shouldUseAssignedFlag(individualMain.individualId) 
                             
                             (goToNextPortal) =      activatePortal($event)
                             (selectedItemChange) =  onSelectedItemChange($event)
                             (sortChange) =          updateSort($event)
+                            (assignedFlagChanges) = setAssignedFlagChanges($event)
                         ></app-individual-lookup>
                     </ng-container>
                     <ng-template #loadingLocationTpl>
