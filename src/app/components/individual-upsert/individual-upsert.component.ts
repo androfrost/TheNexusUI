@@ -72,9 +72,9 @@ export class IndividualUpsertComponent implements OnChanges{
     // Set all fields to match the input individual if for update (will be blank for adding new)
     this.firstName = this.upsertIndividual.firstName;
     this.lastName = this.upsertIndividual.lastName;
+    this.individualTypeOption = this.upsertIndividual.individualTypeId;
     this.description = this.upsertIndividual.individualDescription;
     this.statusOption = this.upsertIndividual.statusId;
-    // this.individualTypeOption will be set in ngOnChanges
     this.sexOption = this.upsertIndividual.sexId;
     this.dateOfBirthDate = this.upsertIndividual.dateOfBirth;
     this.SetChosenFamily(this.upsertIndividual.familyId);
