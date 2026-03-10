@@ -384,12 +384,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         if (this.individualMain.individualId > 0) {
           if (change.isAssigned) {
             // Add the link: individual to location
-            const individualLocDto = new IndividualLocationsDto();
-            individualLocDto.individualId = this.individualMain.individualId;
-            individualLocDto.locationId = change.id; // location id from lookup
-            
-            this.locationService.addIndividualToALocation(individualLocDto).subscribe(
-              (result) => {
+            this.individualLocationService.addIndividualLocation({ individualId: this.individualMain.individualId, locationId: change.id }).subscribe(
+            (result) => {
                 console.log(`Successfully linked Individual ${this.individualMain.individualId} to Location ${change.id}`);
               },
               (error) => {

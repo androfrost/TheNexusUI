@@ -14,9 +14,9 @@
             <div class="col-12">
                 <table class="table table-striped">
                     <thead>
-                        <th (click)="OrderId()">ID</th>
-                        <th (click)="OrderName()">Name</th>
-                        <th *ngIf="hasAssignedFlag">Assigned</th>
+                        <th (click)="Order('id')">ID</th>
+                        <th (click)="Order('name')">Name</th>
+                        <th (click)="Order('isAssigned')" *ngIf="hasAssignedFlag">Assigned</th>
                     </thead>
                     <tbody class="table-group-divider">
                         <tr *ngFor="let item of lookupItems" (click)="SelectItem(item)">
@@ -32,6 +32,7 @@
         </div>
     </div>
     <div class="portal-footer text-center">
+        <button class="bottom-docked-buttons" (click)="Save()" *ngIf="hasAssignedFlag" >Save</button>
         <button class="bottom-docked-buttons" (click)="Cancel()">Return</button>
     </div>
 </div>
