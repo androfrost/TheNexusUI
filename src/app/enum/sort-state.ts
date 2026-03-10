@@ -1,4 +1,4 @@
 export interface SortState {
-  field: 'id' | 'name';
+  field: 'id' | 'name' | 'isAssigned';
   order: 'asc' | 'desc';
 }

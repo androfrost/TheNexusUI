@@ -32,7 +32,7 @@ export class IndividualLookupComponent implements OnChanges {
   @Output() lookupDtoChange = new EventEmitter<LookupDto[]>(); // To send back updated lookup list with assigned/unassigned changes
   @Output() assignedFlagChanges = new EventEmitter<{ id: number; isAssigned: boolean }[]>();
 
-  private currentSortField?: 'id' | 'name';
+  private currentSortField?: 'id' | 'name' | 'isAssigned';
   private currentSortOrder: 'asc' | 'desc' = 'asc';
   private originalAssignedMap: Map<number, boolean> = new Map();
   private assignedChangesMap: Map<number, boolean> = new Map();
@@ -115,29 +115,28 @@ export class IndividualLookupComponent implements OnChanges {
     
   }
 
-  // Simple sorting functions for the lookup list
-  OrderId(): void {
-    this.currentSortField = 'id';
+  // Simple sorting functions for the lookup list based on the field clicked in the UI, toggling between ascending and descending on each click
+  Order(fieldName: 'id' | 'name' | 'isAssigned'): void {
+    this.currentSortField = fieldName;
     this.currentSortOrder = this.currentSortOrder === 'asc' ? 'desc' : 'asc';
     
-    // Apply sort locally
+    // Apply sort locally using the requested field
     this.lookupItems.sort((a, b) => {
-      const compareResult = a.id > b.id ? 1 : -1;
-      return this.currentSortOrder === 'asc' ? compareResult : -compareResult;
-    });
-    
-    this.sortChange.emit({
-      field: this.currentSortField,
-      order: this.currentSortOrder
-    });
-  }
-  OrderName(): void {
-    this.currentSortField = 'name';
-    this.currentSortOrder = this.currentSortOrder === 'asc' ? 'desc' : 'asc';
-    
-    // Apply sort locally
-    this.lookupItems.sort((a, b) => {
-      const compareResult = a.name.localeCompare(b.name);
+      let compareResult = 0;
+
+      switch (fieldName) {
+        case 'id':
+          compareResult = a.id > b.id ? 1 : a.id < b.id ? -1 : 0;
+          break;
+        case 'name':
+          compareResult = a.name.localeCompare(b.name);
+          break;
+        case 'isAssigned':
+          // booleans: true > false
+          compareResult = a.isAssigned === b.isAssigned ? 0 : a.isAssigned ? 1 : -1;
+          break;
+      }
+
       return this.currentSortOrder === 'asc' ? compareResult : -compareResult;
     });
     
@@ -165,8 +164,12 @@ export class IndividualLookupComponent implements OnChanges {
       // Record net change (assign or unassign)
       this.assignedChangesMap.set(item.id, item.isAssigned);
     }
+  }
 
+  Save(): void {
     const changesArray = Array.from(this.assignedChangesMap.entries()).map(([id, isAssigned]) => ({ id, isAssigned }));
     this.assignedFlagChanges.emit(changesArray);
+
+    this.Cancel();
   }
 }
