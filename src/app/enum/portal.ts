@@ -9,5 +9,8 @@ export enum portal{
     IndividualLookup,
     LocationOptions,
     LocationUpsert,
-    LocationLookup
+    LocationLookup,
+    PhoneNumberOptions,
+    PhoneNumberUpsert,
+    PhoneNumberLookup,
 }

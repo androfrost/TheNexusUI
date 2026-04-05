@@ -26,6 +26,7 @@ export class IndividualUpsertComponent implements OnChanges{
   @Input() allPortalNavigation: number[] = [];
   @Input() dropdownDto: DropdownDto[] = [];
   @Input() locationDropdownDto: DropdownDto[] = [];
+  @Input() phoneNumberDropdownDto: DropdownDto[] = [];
   @Input() individualTypeDropdownDto: DropdownDto[] = [];
   
   @Output() goToNextPortal = new EventEmitter<number>();
@@ -42,9 +43,8 @@ export class IndividualUpsertComponent implements OnChanges{
   dateOfBirthDate: Date = this.upsertIndividual.dateOfBirth;
   dateOfBirthString: string = this.dateOfBirthDate.toISOString();
   locations: DropdownDto[] =  this.locationDropdownDto;
-
   locationOption: number = 0;
-  phoneNumbers: string[] =  ["Choose Phone Number","123-456-7890"];
+  phoneNumbers: DropdownDto[] =  this.phoneNumberDropdownDto;
   phoneNumberOption: number = 0;
   description: string = this.upsertIndividual.individualDescription;
   statuses: string[] =  ["Active", "Inactive", "Deceased"];
@@ -94,6 +94,13 @@ ngOnChanges(changes: SimpleChanges): void {
       this.locations = Array.isArray(this.locationDropdownDto) ? [...this.locationDropdownDto] : [];
       if (!this.locations.find(l => l.id === 0)) {
         this.locations.unshift({ id: 0, name: 'Choose Location' } as DropdownDto);
+      }
+    }
+
+    if (changes['phoneNumberDropdownDto']) {
+      this.phoneNumbers = Array.isArray(this.phoneNumberDropdownDto) ? [...this.phoneNumberDropdownDto] : [];
+      if (!this.phoneNumbers.find(p => p.id === 0)) {
+        this.phoneNumbers.unshift({ id: 0, name: 'Choose Phone Number' } as DropdownDto);
       }
     }
 

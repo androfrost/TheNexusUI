@@ -11,6 +11,8 @@ import { IndividualService } from '../../services/individual.service';
 import { FamilyService } from '../../services/family.service';
 import { LocationService } from '../../services/location.service';
 import { LocationUpsertComponent } from '../location-upsert/location-upsert.component';
+import { PhoneNumberService } from '../../services/phone-number.service';
+import { PhoneNumberUpsertComponent } from '../phone-number-upsert/phone-number-upsert.component';
 import { OptionsComponent } from '../options/options.component';
 
 import { Individual } from '../../models/individual';
@@ -25,12 +27,15 @@ import { IndividualTypeService } from '../../services/individual-type.service';
 import { IndividualLocationsDtoService } from '../../services/individual-locations-dto.service';
 import { IndividualLocationsDto } from '../../models/dto/individual-locations-dto';
 import { IndividualLocationService } from '../../services/individual-location.service';
+import { PhoneNumber } from '../../models/phone-number';
+import { IndividualPhoneNumber } from '../../models/individual-phone-number';
+import { IndividualPhoneNumberService } from '../../services/individual-phone-number.service';
 @Component({
   selector: 'app-nexus-portal',
   standalone: true,
   imports: [CommonModule, FormsModule, IndividualUpsertComponent,
     FamilyUpsertComponent, IndividualLookupComponent,
-    LocationUpsertComponent, OptionsComponent],
+    LocationUpsertComponent, PhoneNumberUpsertComponent, OptionsComponent],
   templateUrl: './nexus-portal.component.html',
   styleUrl: './nexus-portal.component.css',
   providers: [IndividualService]
@@ -48,9 +53,11 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   private pollingSubscription2?: Subscription = new Subscription();
   private pollingSubscription3?: Subscription = new Subscription();
   private pollingSubscription4?: Subscription = new Subscription();
+  private pollingSubscription5?: Subscription = new Subscription();
   loadingLookup: boolean = false;
   loadingFamily: boolean = false;
   loadingLocation: boolean = false;
+  loadingPhoneNumber: boolean = false;
 
   status = status;
   private currentSort?: SortState;
@@ -66,15 +73,21 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   locationMain: Location = new Location();
   individualLocationsMain: IndividualLocation[] = [];
   individualLocationMain: IndividualLocation = new IndividualLocation();
+  phoneNumbersMain: PhoneNumber[] = [];
+  phoneNumberMain: PhoneNumber = new PhoneNumber();
+  individualPhoneNumbersMain: IndividualPhoneNumber[] = [];
+  individualPhoneNumberMain: IndividualPhoneNumber = new IndividualPhoneNumber();
 
   dropdownDtoMain: DropdownDto[] = [];
   dropdownDtoLocationMain: DropdownDto[] = [];
   dropdownDtoIndividualTypeMain: DropdownDto[] = [];
+  dropdownDtoPhoneNumberMain: DropdownDto[] = [];
 
   constructor(private cdr: ChangeDetectorRef, private individualService: IndividualService,
     private familyService: FamilyService, private locationService: LocationService,
     private individualTypeService: IndividualTypeService, private individualLocationsDtoService: IndividualLocationsDtoService,
-  private individualLocationService: IndividualLocationService)
+    private individualLocationService: IndividualLocationService, private phoneNumberService: PhoneNumberService,
+    private individualPhoneNumberService: IndividualPhoneNumberService)
   {
   }
 
@@ -87,7 +100,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     this.setPortalStates(portalId);
     // Start polling when entering the IndividualLookup or FamilyLookup portal, stop when leaving
     if (portalId === portal.IndividualLookup || portalId === portal.FamilyLookup || portalId === portal.IndividualUpsert
-      || portalId === portal.LocationLookup || portalId === portal.LocationUpsert
+      || portalId === portal.LocationLookup || portalId === portal.LocationUpsert || portalId === portal.PhoneNumberLookup
+      || portalId === portal.PhoneNumberUpsert
     ) {
       this.startPolling(portalId);
     } else {
@@ -107,6 +121,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     let fetchFn2: () => any = () => of([]);
     let fetchFn3: () => any = () => of([]);
     let fetchFn4: () => any = () => of([]);
+    let fetchFn5: () => any = () => of([]);
     let currentOrder: 'asc' | 'desc' | undefined;
     let orderField: 'id' | 'name' | undefined;
 
@@ -116,6 +131,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       fetchFn2 = () => this.familyService.getFamilies();
       fetchFn3 = () => this.locationService.getLocations();
       fetchFn4 = () => this.individualTypeService.getIndividualTypes();
+      fetchFn5 = () => this.phoneNumberService.getPhoneNumbers();
     } else if (targetPortal === portal.FamilyLookup) {
       // familyService is injected optionally; if not available log and stop
       if (!this.familyService || typeof this.familyService.getFamilies !== 'function') {
@@ -137,11 +153,22 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       else
         fetchFn = () => this.locationService.getLocations();
       fetchFn2 = () => of([]);
+    } else if (targetPortal === portal.PhoneNumberLookup) {
+      if (!this.phoneNumberService || typeof this.phoneNumberService.getPhoneNumbers !== 'function') {
+        console.warn('PhoneNumber service not available. Cannot start phone number polling.');
+        return;
+      }
+      this.loadingPhoneNumber = true;
+      if  (this.individualMain && this.individualMain.individualId > 0)
+        fetchFn = () => this.phoneNumberService.getPhoneNumbersWithAssignedIndividualsByIndividualId(this.individualMain.individualId);
+      else
+        fetchFn = () => this.phoneNumberService.getPhoneNumbers();
     } else if (targetPortal === portal.IndividualUpsert || targetPortal === portal.FamilyUpsert || targetPortal === portal.LocationUpsert) {
       fetchFn = () => of([]);
       fetchFn2 = () => this.familyService.getFamilies();
       fetchFn3 = () => this.locationService.getLocationsByIndividualId(this.individualMain.individualId);
       fetchFn4 = () => this.individualTypeService.getIndividualTypes();
+      fetchFn5 = () => this.phoneNumberService.getPhoneNumbersByIndividualId(this.individualMain.individualId);
     } else {
       // unsupported portal for polling
       return;
@@ -152,10 +179,10 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.lookupDtoMain = [];
       
       for (const item of result || []) {
-        const id = item.individualId ?? item.familyId ?? item.id ?? item.locationId ?? 0;
+        const id = item.individualId ?? item.familyId ?? item.id ?? item.locationId ?? item.phoneNumberId ??0;
         const secondId = item.familyId ?? item.secondId ?? 0;
         const name = item.firstName ? `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim()
-                     : item.familyName ?? item.name ?? item.locationName ?? '';
+                     : item.familyName ?? item.name ?? item.locationName ?? item.phoneNumberValue ?? '';
         const isAssigned = item.isAssigned ?? false;
         this.lookupDtoMain.push({ id, secondId, name, isAssigned });
       }
@@ -177,6 +204,9 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       } else if (targetPortal === portal.LocationLookup) {
         this.locationsMain = result as Location[];
         this.loadingLocation = false;
+      } else if (targetPortal === portal.PhoneNumberLookup) {
+        this.phoneNumbersMain = result as PhoneNumber[];
+        this.loadingPhoneNumber = false;
       }
       
       // Apply current sort if exists
@@ -234,6 +264,20 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.cdr.markForCheck?.();
     };
 
+    const handleResult5 = (result: any[]) => {
+      // Normalize results into LookupDto[]
+      this.dropdownDtoPhoneNumberMain = [];
+
+      for (const item of result || []) {
+        const id = item.phoneNumberId ?? item.id ?? 0;
+        const name = item.phoneNumberValue ?? '';
+        this.dropdownDtoPhoneNumberMain.push({ id, name });
+      }
+
+      // trigger change detection if needed
+      this.cdr.markForCheck?.();
+    };
+
     // initial immediate fetch
     fetchFn().subscribe(
       (res: any[]) => handleResult(res),
@@ -241,6 +285,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         if (targetPortal === portal.IndividualLookup) this.loadingLookup = false;
         if (targetPortal === portal.FamilyLookup) this.loadingFamily = false;
         if (targetPortal === portal.LocationLookup) this.loadingLocation = false;
+        if (targetPortal === portal.PhoneNumberLookup) this.loadingPhoneNumber = false;
       }
     );
 
@@ -254,6 +299,10 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
 
     fetchFn4().subscribe(
       (res: any[]) => handleResult4(res), () =>{}
+    );
+
+    fetchFn5().subscribe(
+      (res: any[]) => handleResult5(res), () =>{}
     );
 
     // periodic polling (cancels previous in-flight via switchMap)
@@ -299,6 +348,16 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         });
     }
 
+    // periodic polling for quinary fetch function (fetchFn5)
+    if (fetchFn5){
+      this.pollingSubscription5 = interval(1000)
+        .pipe(
+          switchMap(() => fetchFn5())
+        )
+        .subscribe((value) => handleResult5(value as any[]), (err) => {
+          console.error('Polling error for quinary fetch', err);
+        });
+    }
   }
 
   private stopPolling(): void {
@@ -317,6 +376,10 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     if (this.pollingSubscription4) {
       this.pollingSubscription4.unsubscribe();
       this.pollingSubscription4 = undefined;
+    }
+    if (this.pollingSubscription5) {
+      this.pollingSubscription5.unsubscribe();
+      this.pollingSubscription5 = undefined;
     }
   }
 
@@ -338,6 +401,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.familyMain = this.familiesMain.find(fam => fam.familyId === $event.id) || new Family();
     if (this.portalState === portal.LocationLookup)
       this.locationMain = this.locationsMain.find(loc => loc.locationId === $event.id) || new Location();
+    if (this.portalState === portal.PhoneNumberLookup)
+      this.phoneNumberMain = this.phoneNumbersMain.find(phone => phone.phoneNumberId === $event.id) || new PhoneNumber();
 
   }
 
@@ -345,6 +410,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     this.individualMain = new Individual();
     this.familyMain = new Family();
     this.locationMain = new Location();
+    this.phoneNumberMain = new PhoneNumber();
     return true;
   }
 
@@ -378,34 +444,52 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       const item = this.lookupDtoMain.find(i => i.id === change.id);
       if (item) {
         item.isAssigned = change.isAssigned;
-        
-        // Handle backend operations for IndividualLocation
-        // Only process if we have a valid individual (when in context of individual management)
+
         if (this.individualMain.individualId > 0) {
-          if (change.isAssigned) {
-            // Add the link: individual to location
-            this.individualLocationService.addIndividualLocation({ individualId: this.individualMain.individualId, locationId: change.id }).subscribe(
-            (result) => {
-                console.log(`Successfully linked Individual ${this.individualMain.individualId} to Location ${change.id}`);
-              },
-              (error) => {
-                console.error(`Failed to link Individual ${this.individualMain.individualId} to Location ${change.id}:`, error);
-              }
-            );
-          } else {
-            // Remove the link: individual from location
-            this.individualLocationService.deleteIndividualLocationByIndividualAndLocationId(this.individualMain.individualId, change.id).subscribe(
-              () => {
-                console.log(`Successfully unlinked Individual ${this.individualMain.individualId} from Location ${change.id}`);
-              },
-              (error) => {
-                console.error(`Failed to unlink Individual ${this.individualMain.individualId} from Location ${change.id}:`, error);
-              }
-            );
+          if (this.portalState === portal.LocationLookup) {
+            if (change.isAssigned) {
+              this.individualLocationService.addIndividualLocation({ individualId: this.individualMain.individualId, locationId: change.id }).subscribe(
+                () => {
+                  console.log(`Successfully linked Individual ${this.individualMain.individualId} to Location ${change.id}`);
+                },
+                (error) => {
+                  console.error(`Failed to link Individual ${this.individualMain.individualId} to Location ${change.id}:`, error);
+                }
+              );
+            } else {
+              this.individualLocationService.deleteIndividualLocationByIndividualAndLocationId(this.individualMain.individualId, change.id).subscribe(
+                () => {
+                  console.log(`Successfully unlinked Individual ${this.individualMain.individualId} from Location ${change.id}`);
+                },
+                (error) => {
+                  console.error(`Failed to unlink Individual ${this.individualMain.individualId} from Location ${change.id}:`, error);
+                }
+              );
+            }
+          } else if (this.portalState === portal.PhoneNumberLookup) {
+            if (change.isAssigned) {
+              this.individualPhoneNumberService.addIndividualPhoneNumber({ individualId: this.individualMain.individualId, phoneNumberId: change.id }).subscribe(
+                () => {
+                  console.log(`Successfully linked Individual ${this.individualMain.individualId} to PhoneNumber ${change.id}`);
+                },
+                (error) => {
+                  console.error(`Failed to link Individual ${this.individualMain.individualId} to PhoneNumber ${change.id}:`, error);
+                }
+              );
+            } else {
+              this.individualPhoneNumberService.deleteIndividualPhoneNumberByIndividualAndPhoneNumberId(this.individualMain.individualId, change.id).subscribe(
+                () => {
+                  console.log(`Successfully unlinked Individual ${this.individualMain.individualId} from PhoneNumber ${change.id}`);
+                },
+                (error) => {
+                  console.error(`Failed to unlink Individual ${this.individualMain.individualId} from PhoneNumber ${change.id}:`, error);
+                }
+              );
+            }
           }
         }
       } else {
-        console.warn(`Item with id ${change.id} not found in lookupDtoMain to update assigned flag.`);  
+        console.warn(`Item with id ${change.id} not found in lookupDtoMain to update assigned flag.`);
       }
     }
   }
