@@ -88,9 +88,18 @@
             Phone Number
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-pho" id="drop-pho" (change)="GetChosenPhoneNumber()" [(ngModel)]="phoneNumberOption">
-                <option *ngFor="let phoneNumber of phoneNumbers; let i = index" [value]="i">{{ phoneNumber }}</option>
-            </select>
+            <div class="row">
+                <div class="col-9 col-sm-7">
+                    <select class="drop-pho" id="drop-pho" (change)="GetChosenPhoneNumber()" [(ngModel)]="phoneNumberOption">
+                        <option *ngFor="let phoneNumber of phoneNumbers; let i = index" [value]="i">{{ phoneNumber.name }}</option>
+                    </select>
+                </div>
+                <div class="col-1 col-sm-2">
+                    <button class="btn-func btn-plus" (click)="goToNextPortal.emit(portal.PhoneNumberUpsert)" ><img src="../../assets/images/Add.jpg" width="20" alt="Add"></button>
+                </div>
+                <div class="col-1 col-sm-2">
+                    <button class="btn-func btn-edit" (click)="TraversePortal(portal.PhoneNumberLookup)" ><img src="../../assets/images/Edit.jpg" width="20" alt="Edit"></button>
+                </div>
         </div>
     </div>
     <hr>

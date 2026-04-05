@@ -18,8 +18,8 @@
                     <app-options
                         [entrancePortal]="portal.NexusPortal"
                         [optionName]="'Main'"
-                        [optionButtonNames]="['Individual','Family','Location']"
-                        [optionButtonPortals]="[portal.IndividualOptions, portal.FamilyOptions, portal.LocationOptions]"
+                        [optionButtonNames]="['Individual','Family','Location','Phone Number']"
+                        [optionButtonPortals]="[portal.IndividualOptions, portal.FamilyOptions, portal.LocationOptions, portal.PhoneNumberOptions]"
                         (goToNextPortal)="activatePortal($event)"
                         (selectedItemChange)="resetData()">
                     </app-options>
@@ -54,6 +54,7 @@
                         [allPortalNavigation] =         allPortalStates
                         [dropdownDto] =                 dropdownDtoMain
                         [locationDropdownDto] =         dropdownDtoLocationMain
+                        [phoneNumberDropdownDto] =      dropdownDtoPhoneNumberMain
                         [individualTypeDropdownDto] =   dropdownDtoIndividualTypeMain
                         [upsertIndividual] =            individualMain
                         (goToNextPortal) =              activatePortal($event)>
@@ -161,6 +162,50 @@
                         [optionName]="'Location'"
                         [optionButtonNames]="['Add Location','Find Location']"
                         [optionButtonPortals]="[portal.LocationUpsert, portal.LocationLookup]"
+                        (goToNextPortal)="activatePortal($event)"
+                        (selectedItemChange)="resetData()">
+                    </app-options>
+                </div>
+
+                <div *ngIf="portalState === portal.PhoneNumberUpsert">
+                    <app-phone-number-upsert 
+                        [allPortalNavigation] =         allPortalStates
+                        [upsertPhoneNumber] =           phoneNumberMain
+                        [individualId] =                individualMain.individualId
+                        (goToNextPortal) =              activatePortal($event)>
+                    </app-phone-number-upsert>
+                </div>
+
+                <div *ngIf="portalState === portal.PhoneNumberLookup">
+                    <ng-container *ngIf="!loadingPhoneNumber; else loadingPhoneNumberTpl">
+                        <app-individual-lookup  
+                            [allPortalNavigation] = allPortalStates
+                            [lookupDto] =           lookupDtoMain
+                            [lookupPortal] =        portal.PhoneNumberUpsert
+                            [hasAssignedFlag]=      shouldUseAssignedFlag(individualMain.individualId) 
+                            
+                            (goToNextPortal) =      activatePortal($event)
+                            (selectedItemChange) =  onSelectedItemChange($event)
+                            (sortChange) =          updateSort($event)
+                            (assignedFlagChanges) = setAssignedFlagChanges($event)
+                        ></app-individual-lookup>
+                    </ng-container>
+                    <ng-template #loadingPhoneNumberTpl>
+                        <div class="card portal">
+                            <div class="card-title"><b>Loading Phone Numbers...</b></div>
+                            <div class="spinner-wrapper">
+                                <div class="spinner" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+
+                <div *ngIf="portalState === portal.PhoneNumberOptions">
+                    <app-options
+                        [entrancePortal]="portal.ChoosePortal"
+                        [optionName]="'Phone Number'"
+                        [optionButtonNames]="['Add Phone Number','Find Phone Number']"
+                        [optionButtonPortals]="[portal.PhoneNumberUpsert, portal.PhoneNumberLookup]"
                         (goToNextPortal)="activatePortal($event)"
                         (selectedItemChange)="resetData()">
                     </app-options>
