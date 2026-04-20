@@ -1,0 +1,40 @@
+<!-- <h2>Pop-Up Modal Example</h2> -->
+<!-- Button to open the modal -->
+<!-- <button id="openModalBtn">Open Pop-Up</button> -->
+
+<!-- Modal content -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" (click)="closeModal()">&times;</span>
+        <h3>{{ title }}</h3>
+        <p>{{ message }}</p>
+        <div class="row" *ngIf="isInputVisible()">
+            <div class="col-4">
+                <label>{{ inputLabel }}</label>
+            </div>
+            <div class="col-6">
+                <input type="text" [placeholder]="inputText" [(ngModel)]="inputValue" />
+            </div>
+        </div>
+        <div class="row" *ngIf="isPasswordVisible()">
+            <div class="col-4">
+                <label>{{ passwordLabel }}</label>
+            </div>
+            <div class="col-6">
+                <input type="password" [placeholder]="passwordText" [(ngModel)]="passwordValue" />
+            </div>
+        </div>
+        <div class="row">
+             <div class="col" *ngIf="isSendButtonVisible()">
+                <button class="sendBtn" (click)="returnValues()">
+                    {{ sendButtonText }}
+                </button>
+            </div>
+            <div class="col" *ngIf="isCloseButtonVisible()">
+                <button class="closeBtn" (click)="closeModal()">
+                    {{ closeButtonText }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

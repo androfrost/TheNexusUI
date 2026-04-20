@@ -1,4 +1,5 @@
 <div class="container-fluid outer-container">
+    <div>Welcome to The Nexus, {{ userName }}!</div>
     <div class="card main">
         <div class="row main-row">
             <div class="col-sm-4 col-12 nexus-ready">
@@ -8,8 +9,20 @@
                             <h1>The Nexus</h1>
                         </div>
                         <div class="col-12 justify-content-center text-center">
-                            <button class="bottom-docked-buttons" (click)="activatePortal(portal.ChoosePortal)">Ready</button>
+                            <button class="bottom-docked-buttons" (click)="setUserNameFlag(true)">Ready</button>
                         </div>
+                    </div>
+
+                    <div *ngIf="needToGetUserName">
+                        <app-popup 
+                            [message]="'Who are you?'" 
+                            [popupType]="'input'"
+                            [inputLabel]="'Guest:'"
+                            [closeButtonText]="'Cancel'"
+                            (inputValueChange)="setUserName($event)"
+                            (hasReturnValues)="popupActivatePortal($event)"
+                            (closed)="setUserNameFlag(false)">
+                        </app-popup>
                     </div>
                 </div>
 

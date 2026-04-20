@@ -30,12 +30,13 @@ import { IndividualLocationService } from '../../services/individual-location.se
 import { PhoneNumber } from '../../models/phone-number';
 import { IndividualPhoneNumber } from '../../models/individual-phone-number';
 import { IndividualPhoneNumberService } from '../../services/individual-phone-number.service';
+import { PopupComponent } from "../popup/popup.component";
 @Component({
   selector: 'app-nexus-portal',
   standalone: true,
   imports: [CommonModule, FormsModule, IndividualUpsertComponent,
     FamilyUpsertComponent, IndividualLookupComponent,
-    LocationUpsertComponent, PhoneNumberUpsertComponent, OptionsComponent],
+    LocationUpsertComponent, PhoneNumberUpsertComponent, OptionsComponent, PopupComponent],
   templateUrl: './nexus-portal.component.html',
   styleUrl: './nexus-portal.component.css',
   providers: [IndividualService]
@@ -47,6 +48,11 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   portalState: number = 0;
   previousPortalState: number = 0; //portal.IndividualUpsert;
   allPortalStates: number[] = [];
+
+  userName: string = "Guest";
+  needToGetUserName: boolean = false;
+  continueToPortal: boolean = false; // flag to control popup flow
+
   private intervalId: any;
   private destroyed$ = new Subject<void>();
   private pollingSubscription?: Subscription;
@@ -92,9 +98,27 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Polling was removed; we fetch data once when the portal is activated.
-
+    this.setUserName("Guest"); // default value
   }
+
+  ///////////////////////////
+  // Used for main Nexus entrance portal only, if moved to own component then move this there instead
+  // Sets popup and can be reused in other components that use popups
+  setUserName(name: string) {
+    this.userName = name;
+  }
+
+  setUserNameFlag(needToGetUserName: boolean) {
+    this.needToGetUserName = needToGetUserName;
+  }
+
+  popupActivatePortal(continueToPortal: boolean) {
+    if (continueToPortal) {
+      this.activatePortal(portal.ChoosePortal);
+    }
+    this.setUserNameFlag(false);
+  }
+  //////////////////////////
 
   activatePortal(portalId: number) : void{
     this.setPortalStates(portalId);
