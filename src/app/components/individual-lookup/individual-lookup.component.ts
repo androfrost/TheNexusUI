@@ -6,7 +6,7 @@ import { LookupDto } from '../../models/dto/lookup-dto';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
 import { SortState } from '../../enum/sort-state';
 import { Navigation } from '../../helpers/navigation';
-
+import { Pagination } from '../../helpers/pagination';
 @Component({
   selector: 'app-individual-lookup',
   standalone: true,
@@ -31,7 +31,7 @@ export class IndividualLookupComponent implements OnChanges {
   @Output() sortChange = new EventEmitter<SortState>();
   @Output() lookupDtoChange = new EventEmitter<LookupDto[]>(); // To send back updated lookup list with assigned/unassigned changes
   @Output() assignedFlagChanges = new EventEmitter<{ id: number; isAssigned: boolean }[]>();
-
+  
   private currentSortField?: 'id' | 'name' | 'isAssigned';
   private currentSortOrder: 'asc' | 'desc' = 'asc';
   private originalAssignedMap: Map<number, boolean> = new Map();
@@ -43,14 +43,21 @@ export class IndividualLookupComponent implements OnChanges {
 
   secondIds: DropdownDto[] = this.dropdownDto;
   navigation = Navigation;
+  pagination = new Pagination<LookupDto>();
 
   isDisabled: boolean = false;    // To disable anything that needs to not change when only wanting specific secondary Id
+
+  page: LookupDto[] = [];
+  pageSize: number = 10;
+  currentPage: number = 1;
 
   ngOnInit(): void {
     if (this.filteredSecondaryId != 0 && this.allPortalNavigation[this.allPortalNavigation.length-2] == this.portal.FamilyUpsert){
       this.isDisabled = true;
     }
     this.filterSearchLookupList();
+
+    this.GetPage(this.currentPage);
 
     this.secondIds = [];
     for(const item of this.dropdownDto) 
@@ -103,6 +110,7 @@ export class IndividualLookupComponent implements OnChanges {
 
   // When updating what filters are allowed, update what is to be displayed
   filterSearchLookupList(): void {
+    this.lookupSecondaryId = Number(this.lookupSecondaryId);
     if (this.filteredSecondaryId != 0 && this.allPortalNavigation[this.allPortalNavigation.length-2] == this.portal.FamilyUpsert){
       this.lookupSecondaryId = this.filteredSecondaryId;
     }
@@ -113,6 +121,7 @@ export class IndividualLookupComponent implements OnChanges {
     }
     this.lookupItems = this.lookupItems.filter(item => item.name.toLowerCase().includes(this.lookupTerm.toLowerCase()));
     
+    this.GetPage(1); // Reset to first page on new search or filter
   }
 
   // Simple sorting functions for the lookup list based on the field clicked in the UI, toggling between ascending and descending on each click
@@ -136,10 +145,11 @@ export class IndividualLookupComponent implements OnChanges {
           compareResult = a.isAssigned === b.isAssigned ? 0 : a.isAssigned ? 1 : -1;
           break;
       }
-
       return this.currentSortOrder === 'asc' ? compareResult : -compareResult;
     });
     
+    this.GetPage(1); // Reset to first page on new sort
+
     this.sortChange.emit({
       field: this.currentSortField,
       order: this.currentSortOrder
@@ -171,5 +181,10 @@ export class IndividualLookupComponent implements OnChanges {
     this.assignedFlagChanges.emit(changesArray);
 
     this.Cancel();
+  }
+
+  GetPage(pageNumber: number): void{
+    this.currentPage = pageNumber;
+    this.page = this.pagination.GetPageRecords(this.lookupItems, pageNumber, this.pageSize);
   }
 }
