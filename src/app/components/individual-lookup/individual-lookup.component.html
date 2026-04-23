@@ -5,6 +5,7 @@
         <div class="row">
             <div class="col-5" *ngIf="dropdownDto.length > 1">
                 <select class="drop-secid" id="drop-secid" (change)="filterSearchLookupList()" [(ngModel)]="lookupSecondaryId" [disabled]="isDisabled">
+                    <!-- <option *ngFor="let id of secondIds; let i = index" [value]="id.id">{{ id.name }}</option> -->
                     <option *ngFor="let id of secondIds; let i = index" [value]="i">{{ id.name }}</option>
                 </select>
             </div>
@@ -19,7 +20,7 @@
                         <th (click)="Order('isAssigned')" *ngIf="hasAssignedFlag">Assigned</th>
                     </thead>
                     <tbody class="table-group-divider">
-                        <tr *ngFor="let item of lookupItems" (click)="SelectItem(item)">
+                        <tr *ngFor="let item of page" (click)="SelectItem(item)">
                             <td class="id">{{ item.id }}</td>
                             <td class="name">{{ item.name }}</td>
                             <div *ngIf="hasAssignedFlag" class="assigned-flag">
@@ -29,6 +30,17 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="pagination-button" (click)="GetPage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+        </div>
+        <div class="col text-center">
+            <span>Page {{ currentPage }}</span>
+        </div>
+        <div class="col text-end">
+            <button class="pagination-button" (click)="GetPage(currentPage + 1)" [disabled]="currentPage * pageSize >= lookupItems.length">Next</button>
         </div>
     </div>
     <div class="portal-footer text-center">
