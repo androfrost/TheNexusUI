@@ -19,7 +19,7 @@
         </div>
         <div class="col-12 col-sm-6">
             <select class="drop-typ" id="drop-typ" (change)="GetChosenType()" [(ngModel)]="individualTypeOption">
-                <option *ngFor="let type of individualTypes; let i = index" [value]="i">{{ type.name }}</option>
+                <option *ngFor="let type of individualTypes; let i = index" [value]="type.id">{{ type.name }}</option>
             </select>
         </div>
     </div>

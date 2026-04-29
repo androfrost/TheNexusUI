@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges, OnChanges, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Individual } from '../../models/individual';
 import { status } from '../../enum/status';
@@ -18,7 +18,7 @@ import { Navigation } from '../../helpers/navigation';
   styleUrl: './individual-upsert.component.css',
   providers: [IndividualService]
 })
-export class IndividualUpsertComponent implements OnChanges{
+export class IndividualUpsertComponent implements OnChanges, AfterViewInit{
 
   status = status;
 
@@ -60,6 +60,12 @@ export class IndividualUpsertComponent implements OnChanges{
   }
 
   ngOnInit(): void {
+
+    this.families = Array.isArray(this.dropdownDto) ? [...this.dropdownDto] : [];
+      if (!this.families.find(f => f.id === 0)) {
+        this.families.unshift({ id: 0, name: 'Choose Family' } as DropdownDto);
+      }
+
     // Determine if this is an update or add based on presence of IndividualId
     // If update, set all fields to match the input individual
     // If add, reset all fields to blank/zero
@@ -118,7 +124,8 @@ ngOnChanges(changes: SimpleChanges): void {
       // if you have a date string property, set it here (e.g. dateOfBirthString)
       this.dateOfBirthString = DataFormatting.formatForInput(this.upsertIndividual.dateOfBirth);
       // Set individualTypeOption based on id
-      this.individualTypeOption = this.individualTypes.findIndex(t => t.id === this.upsertIndividual.individualTypeId) || 0;
+      const foundIndex = this.individualTypes.findIndex(t => t.id === this.upsertIndividual.individualTypeId);
+      this.individualTypeOption = foundIndex >= 0 ? foundIndex : 0;
     }
   }
 
@@ -133,10 +140,10 @@ ngOnChanges(changes: SimpleChanges): void {
     this.upsertIndividual.lastName = this.lastName;
     this.upsertIndividual.individualDescription = this.description;
     this.upsertIndividual.statusId = this.statusOption;
-    this.upsertIndividual.individualTypeId = this.individualTypes[this.individualTypeOption].id;
+    this.upsertIndividual.individualTypeId = this.individualTypes[this.individualTypeOption]?.id || 0;
     this.upsertIndividual.sexId = this.sexOption;
     this.upsertIndividual.dateOfBirth = this.dateOfBirthDate; 
-    this.upsertIndividual.familyId = this.families[this.familyOption].id;
+    this.upsertIndividual.familyId = this.families[this.familyOption]?.id || 0;
     this.upsertIndividual.locationId = this.locationOption;
     this.upsertIndividual.phoneNumberId = this.phoneNumberOption;
     // Call appropriate service function based on add vs update
@@ -213,8 +220,8 @@ ngOnChanges(changes: SimpleChanges): void {
   }
 
   SetChosenFamily(typeId: number) : void{
-    let chosenFamily = document.getElementById("drop-fam") as HTMLSelectElement;
-    chosenFamily.selectedIndex = typeId;
+    const foundIndex = this.families.findIndex(f => f.id === typeId);
+    this.familyOption = foundIndex >= 0 ? foundIndex : 0;
   }
 
   GetChosenPhoneNumber() : void{
@@ -235,6 +242,10 @@ ngOnChanges(changes: SimpleChanges): void {
   SetChosenStatus(typeId: number) : void{
     let chosenStatus = document.getElementById("drop-sta") as HTMLSelectElement;
     chosenStatus.selectedIndex = typeId;
+  }
+
+  ngAfterViewInit(): void {
+    this.SetChosenFamily(this.upsertIndividual.familyId);
   }
 
   updateDateForSaving(){
