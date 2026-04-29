@@ -203,10 +203,10 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.lookupDtoMain = [];
       
       for (const item of result || []) {
-        const id = item.individualId ?? item.familyId ?? item.id ?? item.locationId ?? item.phoneNumberId ??0;
+        const id = item.individualId ?? item.familyId ?? item.id ?? item.locationId ?? item.phoneNumberId ?? item.phoneNumber?.[0]?.phoneNumberId ?? 0;
         const secondId = item.familyId ?? item.secondId ?? 0;
         const name = item.firstName ? `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim()
-                     : item.familyName ?? item.name ?? item.locationName ?? item.phoneNumberValue ?? '';
+                     : item.familyName ?? item.name ?? item.locationName ?? item.phoneNumberValue ?? item.phoneNumber?.[0]?.phoneNumberValue ?? '';
         const isAssigned = item.isAssigned ?? false;
         this.lookupDtoMain.push({ id, secondId, name, isAssigned });
       }
@@ -229,7 +229,12 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         this.locationsMain = result as Location[];
         this.loadingLocation = false;
       } else if (targetPortal === portal.PhoneNumberLookup) {
-        this.phoneNumbersMain = result as PhoneNumber[];
+        // Convert assigned-phone-number DTOs into real PhoneNumber objects for selection and upsert
+        if (result.length && (result[0] as any).phoneNumber) {
+          this.phoneNumbersMain = (result as any[]).map(item => (item.phoneNumber?.[0] ?? new PhoneNumber()) as PhoneNumber);
+        } else {
+          this.phoneNumbersMain = result as PhoneNumber[];
+        }
         this.loadingPhoneNumber = false;
       }
       
