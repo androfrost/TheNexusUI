@@ -30,13 +30,13 @@ import { IndividualLocationService } from '../../services/individual-location.se
 import { PhoneNumber } from '../../models/phone-number';
 import { IndividualPhoneNumber } from '../../models/individual-phone-number';
 import { IndividualPhoneNumberService } from '../../services/individual-phone-number.service';
-import { PopupComponent } from "../popup/popup.component";
+import { EntrancePortalComponent } from "../entrance-portal/entrance-portal.component";
 @Component({
   selector: 'app-nexus-portal',
   standalone: true,
   imports: [CommonModule, FormsModule, IndividualUpsertComponent,
     FamilyUpsertComponent, IndividualLookupComponent,
-    LocationUpsertComponent, PhoneNumberUpsertComponent, OptionsComponent, PopupComponent],
+    LocationUpsertComponent, PhoneNumberUpsertComponent, OptionsComponent, EntrancePortalComponent],
   templateUrl: './nexus-portal.component.html',
   styleUrl: './nexus-portal.component.css',
   providers: [IndividualService]
