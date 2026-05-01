@@ -4,26 +4,11 @@
         <div class="row main-row">
             <div class="col-sm-4 col-12 nexus-ready">
                 <div *ngIf="portalState === portal.NexusPortal">
-                    <div class="row portal portal-center">
-                        <div class="main-title col-12 justify-content-center text-center">
-                            <h1>The Nexus</h1>
-                        </div>
-                        <div class="col-12 justify-content-center text-center">
-                            <button class="bottom-docked-buttons" (click)="setUserNameFlag(true)">Ready</button>
-                        </div>
-                    </div>
-
-                    <div *ngIf="needToGetUserName">
-                        <app-popup 
-                            [message]="'Who are you?'" 
-                            [popupType]="'input'"
-                            [inputLabel]="'Guest:'"
-                            [closeButtonText]="'Cancel'"
-                            (inputValueChange)="setUserName($event)"
-                            (hasReturnValues)="popupActivatePortal($event)"
-                            (closed)="setUserNameFlag(false)">
-                        </app-popup>
-                    </div>
+                    <app-entrance-portal 
+                        [userName]="userName"
+                        (goToNextPortal)="activatePortal($event)"
+                        (userNameChange)="setUserName($event)"
+                    ></app-entrance-portal>
                 </div>
 
                 <div *ngIf="portalState === portal.ChoosePortal">
