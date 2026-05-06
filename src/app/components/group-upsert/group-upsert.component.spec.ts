@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FamilyUpsertComponent } from './family-upsert.component';
+import { GroupUpsertComponent } from './group-upsert.component';
 
-describe('FamilyUpsertComponent', () => {
-  let component: FamilyUpsertComponent;
-  let fixture: ComponentFixture<FamilyUpsertComponent>;
+describe('GroupUpsertComponent', () => {
+  let component: GroupUpsertComponent;
+  let fixture: ComponentFixture<GroupUpsertComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FamilyUpsertComponent]
+      imports: [GroupUpsertComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FamilyUpsertComponent);
+    fixture = TestBed.createComponent(GroupUpsertComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -2,10 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NexusPortalComponent } from './components/nexus-portal/nexus-portal.component';
 import { IndividualUpsertComponent } from './components/individual-upsert/individual-upsert.component';
-import { FamilyUpsertComponent } from './components/family-upsert/family-upsert.component';
+import { GroupUpsertComponent } from './components/group-upsert/group-upsert.component';
 import { IndividualOptionsComponent } from './components/individual-options/individual-options.component';
 import { IndividualLookupComponent } from './components/individual-lookup/individual-lookup.component';
-import { FamilyOptionsComponent } from './components/family-options/family-options.component';
 import { LocationUpsertComponent } from './components/location-upsert/location-upsert.component';
 import { OptionsComponent } from './components/options/options.component';
 
@@ -23,11 +22,8 @@ export const routes: Routes = [
     path: 'individual-lookup',
     component: IndividualLookupComponent
   },{
-    path: 'family-options',
-    component: FamilyOptionsComponent
-  },{
-    path: 'family-upsert',
-    component: FamilyUpsertComponent
+    path: 'group-upsert',
+    component: GroupUpsertComponent
   },{
     path: 'location-upsert',
     component: LocationUpsertComponent

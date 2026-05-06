@@ -51,7 +51,7 @@ constructor(private individualService: IndividualService) { }
   //       this.individualService.getIndividuals().subscribe((result: Individual[]) => (this.individualsOptions = result));
   //       this.lookupDtoOptions = []; // Clear existing entries
   //       for (const individual of this.individualsOptions) {
-  //         this.lookupDtoOptions.push({ id: individual.individualId, secondId: individual.familyId, name: individual.firstName + ' ' + individual.lastName });
+  //         this.lookupDtoOptions.push({ id: individual.individualId, secondId: individual.groupId, name: individual.firstName + ' ' + individual.lastName });
   //       }
   //     }
   //   }

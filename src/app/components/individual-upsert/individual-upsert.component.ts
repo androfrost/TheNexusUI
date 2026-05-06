@@ -32,8 +32,8 @@ export class IndividualUpsertComponent implements OnChanges, AfterViewInit{
   @Output() goToNextPortal = new EventEmitter<number>();
   @Output() selectedItemChange = new EventEmitter<boolean>();
 
-  families: DropdownDto[] =  [];
-  familyOption: number = 0;
+  groups: DropdownDto[] =  [];
+  groupOption: number = 0;
   firstName: string = '';
   lastName: string = '';
   individualTypes: DropdownDto[] = []   //["Choose Type","Person", "Animal"];
@@ -61,9 +61,9 @@ export class IndividualUpsertComponent implements OnChanges, AfterViewInit{
 
   ngOnInit(): void {
 
-    this.families = Array.isArray(this.dropdownDto) ? [...this.dropdownDto] : [];
-      if (!this.families.find(f => f.id === 0)) {
-        this.families.unshift({ id: 0, name: 'Choose Family' } as DropdownDto);
+    this.groups = Array.isArray(this.dropdownDto) ? [...this.dropdownDto] : [];
+      if (!this.groups.find(f => f.id === 0)) {
+        this.groups.unshift({ id: 0, name: 'Choose Group' } as DropdownDto);
       }
 
     // Determine if this is an update or add based on presence of IndividualId
@@ -83,16 +83,16 @@ export class IndividualUpsertComponent implements OnChanges, AfterViewInit{
     this.statusOption = this.upsertIndividual.statusId;
     this.sexOption = this.upsertIndividual.sexId;
     this.dateOfBirthDate = this.upsertIndividual.dateOfBirth;
-    this.SetChosenFamily(this.upsertIndividual.familyId);
+    this.SetChosenGroup(this.upsertIndividual.groupId);
     this.locationOption = this.upsertIndividual.locationId;
     this.phoneNumberOption = this.upsertIndividual.phoneNumberId;
   }
 
 ngOnChanges(changes: SimpleChanges): void {
     if (changes['dropdownDto']) {
-      this.families = Array.isArray(this.dropdownDto) ? [...this.dropdownDto] : [];
-      if (!this.families.find(f => f.id === 0)) {
-        this.families.unshift({ id: 0, name: 'Choose Family' } as DropdownDto);
+      this.groups = Array.isArray(this.dropdownDto) ? [...this.dropdownDto] : [];
+      if (!this.groups.find(f => f.id === 0)) {
+        this.groups.unshift({ id: 0, name: 'Choose Group' } as DropdownDto);
       }
     }
 
@@ -118,7 +118,7 @@ ngOnChanges(changes: SimpleChanges): void {
     }
 
     if (changes['upsertIndividual'] && this.upsertIndividual) {
-      this.familyOption = this.upsertIndividual.familyId ?? 0;
+      this.groupOption = this.upsertIndividual.groupId ?? 0;
       this.firstName = this.upsertIndividual.firstName ?? '';
       this.lastName = this.upsertIndividual.lastName ?? '';
       // if you have a date string property, set it here (e.g. dateOfBirthString)
@@ -143,7 +143,7 @@ ngOnChanges(changes: SimpleChanges): void {
     this.upsertIndividual.individualTypeId = this.individualTypes[this.individualTypeOption]?.id || 0;
     this.upsertIndividual.sexId = this.sexOption;
     this.upsertIndividual.dateOfBirth = this.dateOfBirthDate; 
-    this.upsertIndividual.familyId = this.families[this.familyOption]?.id || 0;
+    this.upsertIndividual.groupId = this.groups[this.groupOption]?.id || 0;
     this.upsertIndividual.locationId = this.locationOption;
     this.upsertIndividual.phoneNumberId = this.phoneNumberOption;
     // Call appropriate service function based on add vs update
@@ -166,8 +166,8 @@ ngOnChanges(changes: SimpleChanges): void {
     this.SetChosenSex(this.sexOption);
     this.dateOfBirthDate = new Date();
     this.dateOfBirthString = "";
-    this.familyOption = 0;
-    this.SetChosenFamily(this.familyOption);
+    this.groupOption = 0;
+    this.SetChosenGroup(this.groupOption);
     this.locationOption = 0;
     this.SetChosenLocation(this.locationOption);
     this.phoneNumberOption = 0;
@@ -214,14 +214,14 @@ ngOnChanges(changes: SimpleChanges): void {
     chosenLocation.selectedIndex = typeId;
   }
 
-  GetChosenFamily() : void{
-    let chosenFamily = document.getElementById("drop-fam") as HTMLSelectElement;
-    this.familyOption = chosenFamily.selectedIndex;
+  GetChosenGroup() : void{
+    let chosenGroup = document.getElementById("drop-gro") as HTMLSelectElement;
+    this.groupOption = chosenGroup.selectedIndex;
   }
 
-  SetChosenFamily(typeId: number) : void{
-    const foundIndex = this.families.findIndex(f => f.id === typeId);
-    this.familyOption = foundIndex >= 0 ? foundIndex : 0;
+  SetChosenGroup(typeId: number) : void{
+    const foundIndex = this.groups.findIndex(f => f.id === typeId);
+    this.groupOption = foundIndex >= 0 ? foundIndex : 0;
   }
 
   GetChosenPhoneNumber() : void{
@@ -245,7 +245,7 @@ ngOnChanges(changes: SimpleChanges): void {
   }
 
   ngAfterViewInit(): void {
-    this.SetChosenFamily(this.upsertIndividual.familyId);
+    this.SetChosenGroup(this.upsertIndividual.groupId);
   }
 
   updateDateForSaving(){

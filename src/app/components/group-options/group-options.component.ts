@@ -2,16 +2,16 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { LookupDto } from '../../models/dto/lookup-dto';
 import { portal } from '../../enum/portal';
 import { status } from '../../enum/status';
-import { FamilyService } from '../../services/family.service';
+import { GroupService } from '../../services/group.service';
 
 @Component({
-  selector: 'app-family-options',
+  selector: 'app-group-options',
   standalone: true,
   imports: [],
-  templateUrl: './family-options.component.html',
-  styleUrl: './family-options.component.css'
+  templateUrl: './group-options.component.html',
+  styleUrl: './group-options.component.css'
 })
-export class FamilyOptionsComponent {
+export class GroupOptionsComponent {
   portal = portal;
   portalState: number = 0;
   status = status;
@@ -23,7 +23,7 @@ export class FamilyOptionsComponent {
   @Output() selectedItemChange = new EventEmitter<boolean>();
  
   
-  constructor(private familyService: FamilyService) { }
+  constructor(private groupService: GroupService) { }
   
   TraversePortal(portalId: number) : void{
     this.goToNextPortal.emit(portalId);
