@@ -16,19 +16,19 @@
                     <app-options
                         [entrancePortal]="portal.NexusPortal"
                         [optionName]="'Main'"
-                        [optionButtonNames]="['Individual','Family','Location','Phone Number']"
-                        [optionButtonPortals]="[portal.IndividualOptions, portal.FamilyOptions, portal.LocationOptions, portal.PhoneNumberOptions]"
+                        [optionButtonNames]="['Individual','Group','Location','Phone Number']"
+                        [optionButtonPortals]="[portal.IndividualOptions, portal.GroupOptions, portal.LocationOptions, portal.PhoneNumberOptions]"
                         (goToNextPortal)="activatePortal($event)"
                         (selectedItemChange)="resetData()">
                     </app-options>
                 </div>
 
-                <div *ngIf="portalState === portal.FamilyUpsert">
-                    <app-family-upsert 
+                <div *ngIf="portalState === portal.GroupUpsert">
+                    <app-group-upsert 
                         [allPortalNavigation] =     allPortalStates
-                        [upsertFamily] =            familyMain
+                        [upsertGroup] =             groupMain
                         (goToNextPortal) =          activatePortal($event)
-                    ></app-family-upsert>
+                    ></app-group-upsert>
                 </div>
 
                 <div *ngIf="portalState === portal.IndividualOptions">
@@ -66,7 +66,7 @@
                             [lookupDto] =           lookupDtoMain
                             [dropdownDto] =         dropdownDtoMain
                             [lookupPortal] =        portal.IndividualUpsert
-                            [filteredSecondaryId] = familyMain.familyId
+                            [filteredSecondaryId] = groupMain.groupId
                             (goToNextPortal) =      activatePortal($event)
                             (selectedItemChange) =  onSelectedItemChange($event)
                             (sortChange) =          updateSort($event)
@@ -83,37 +83,37 @@
                     </ng-template>
                 </div>
 
-                <div *ngIf="portalState === portal.FamilyOptions">
-                    <!-- <app-family-options 
+                <div *ngIf="portalState === portal.GroupOptions">
+                    <!-- <app-group-options 
                         [entrancePortal] =          portal.ChoosePortal 
                         (goToNextPortal) =          activatePortal($event)
                         (selectedItemChange) =      resetData()
-                    ></app-family-options> -->
+                    ></app-group-options> -->
                     <app-options
                         [entrancePortal]="portal.ChoosePortal"
-                        [optionName]="'Family'"
-                        [optionButtonNames]="['Add Family','Find Family']"
-                        [optionButtonPortals]="[portal.FamilyUpsert, portal.FamilyLookup]"
+                        [optionName]="'Group'"
+                        [optionButtonNames]="['Add Group','Find Group']"
+                        [optionButtonPortals]="[portal.GroupUpsert, portal.GroupLookup]"
                         (goToNextPortal)="activatePortal($event)"
                         (selectedItemChange)="resetData()">
                     </app-options>
                 </div>
 
-                <div *ngIf="portalState === portal.FamilyLookup">
-                    <ng-container *ngIf="!loadingFamily; else loadingFamilyTpl">
+                <div *ngIf="portalState === portal.GroupLookup">
+                    <ng-container *ngIf="!loadingGroup; else loadingGroupTpl">
                         <app-individual-lookup  
                             [allPortalNavigation] = allPortalStates
                             [lookupDto] =           lookupDtoMain
-                            [lookupPortal] =        portal.FamilyUpsert
+                            [lookupPortal] =        portal.GroupUpsert
                             
                             (goToNextPortal) =      activatePortal($event)
                             (selectedItemChange) =  onSelectedItemChange($event)
                             (sortChange) =          updateSort($event)
                         ></app-individual-lookup>
                     </ng-container>
-                    <ng-template #loadingFamilyTpl>
+                    <ng-template #loadingGroupTpl>
                         <div class="card portal">
-                            <div class="card-title"><b>Loading Families...</b></div>
+                            <div class="card-title"><b>Loading Groups...</b></div>
                             <div class="spinner-wrapper">
                                 <div class="spinner" aria-hidden="true"></div>
                             </div>

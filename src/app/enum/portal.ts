@@ -1,9 +1,9 @@
 export enum portal{
     NexusPortal,
     ChoosePortal,
-    FamilyOptions,
-    FamilyUpsert,
-    FamilyLookup,
+    GroupOptions,
+    GroupUpsert,
+    GroupLookup,
     IndividualOptions,
     IndividualUpsert,
     IndividualLookup,

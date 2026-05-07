@@ -4,11 +4,11 @@
     <hr>
     <div class="row">
         <div class="col-12 col-sm-6">
-            Family
+            Group
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-fam" id="drop-fam" (change)="GetChosenFamily()" [(ngModel)]="familyOption">
-                <option *ngFor="let family of families; let i = index" [value]="i">{{ family.name }}</option>
+            <select class="drop-gro" id="drop-gro" (change)="GetChosenGroup()" [(ngModel)]="groupOption">
+                <option *ngFor="let group of groups; let i = index" [value]="i">{{ group.name }}</option>
             </select>
         </div>
     </div>

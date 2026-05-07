@@ -1,14 +1,25 @@
 <div class="card portal">
                     
-    <div class="card-title"><b>Add Family</b></div>
+    <div class="card-title"><b>Add Group</b></div>
     <hr>
 
     <div class="row">
         <div class="col-12 col-sm-6">
-            Family Name
+            Group Name
         </div>
         <div class="col-12 col-sm-6">
-            <input type="text" [(ngModel)]="familyName">
+            <input type="text" [(ngModel)]="groupName">
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            Group Type
+        </div>
+        <div class="col-12 col-sm-6">
+            <select class="drop-gro" id="drop-gro" (change)="GetChosenGroup()" [(ngModel)]="groupOption">
+                <option *ngFor="let group of groups; let i = index" [value]="i">{{ group }}</option>
+            </select>
         </div>
     </div>
     <hr>
@@ -17,7 +28,7 @@
             Description
         </div>
         <div class="col-12 col-sm-6">
-            <textarea [(ngModel)]="familyDescription" rows="3"></textarea>
+            <textarea [(ngModel)]="groupDescription" rows="3"></textarea>
         </div>
     </div>
     <div class="col-12">

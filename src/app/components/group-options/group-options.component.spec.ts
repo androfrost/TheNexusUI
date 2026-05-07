@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FamilyOptionsComponent } from './family-options.component';
+import {GroupOptionsComponent } from './group-options.component';
 
-describe('FamilyOptionsComponent', () => {
-  let component: FamilyOptionsComponent;
-  let fixture: ComponentFixture<FamilyOptionsComponent>;
+describe('GroupOptionsComponent', () => {
+  let component: GroupOptionsComponent;
+  let fixture: ComponentFixture<GroupOptionsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FamilyOptionsComponent]
+      imports: [GroupOptionsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FamilyOptionsComponent);
+    fixture = TestBed.createComponent(GroupOptionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

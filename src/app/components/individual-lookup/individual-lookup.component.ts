@@ -24,7 +24,7 @@ export class IndividualLookupComponent implements OnChanges {
   @Input() dropdownDto: DropdownDto[] = []; // The full list of dropdown items passed from parent
   @Input() lookupPortal: number = 0; //
   @Input() filteredSecondaryId: number = 0;  
-  @Input() hasAssignedFlag: boolean = false; // To know whether to show the assigned/unassigned flags for items that have them (ex: Individuals in FamilyUpsert)
+  @Input() hasAssignedFlag: boolean = false; // To know whether to show the assigned/unassigned flags for items that have them (ex: Individuals in GroupUpsert)
   
   @Output() goToNextPortal = new EventEmitter<number>();
   @Output() selectedItemChange = new EventEmitter<LookupDto>();
@@ -52,7 +52,7 @@ export class IndividualLookupComponent implements OnChanges {
   currentPage: number = 1;
 
   ngOnInit(): void {
-    if (this.filteredSecondaryId != 0 && this.allPortalNavigation[this.allPortalNavigation.length-2] == this.portal.FamilyUpsert){
+    if (this.filteredSecondaryId != 0 && this.allPortalNavigation[this.allPortalNavigation.length-2] == this.portal.GroupUpsert){
       this.isDisabled = true;
     }
     this.filterSearchLookupList();
@@ -111,7 +111,7 @@ export class IndividualLookupComponent implements OnChanges {
   // When updating what filters are allowed, update what is to be displayed
   filterSearchLookupList(): void {
     this.lookupSecondaryId = Number(this.lookupSecondaryId);
-    if (this.filteredSecondaryId != 0 && this.allPortalNavigation[this.allPortalNavigation.length-2] == this.portal.FamilyUpsert){
+    if (this.filteredSecondaryId != 0 && this.allPortalNavigation[this.allPortalNavigation.length-2] == this.portal.GroupUpsert){
       this.lookupSecondaryId = this.filteredSecondaryId;
     }
     

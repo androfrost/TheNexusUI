@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { IndividualUpsertComponent } from "../individual-upsert/individual-upsert.component";
 import { portal } from '../../enum/portal';
 import { status } from '../../enum/status';
-import { FamilyUpsertComponent } from "../family-upsert/family-upsert.component";
+import { GroupUpsertComponent } from "../group-upsert/group-upsert.component";
 import { IndividualLookupComponent } from "../individual-lookup/individual-lookup.component";
 import { LookupDto } from '../../models/dto/lookup-dto'; // Update the path as needed
 import { IndividualService } from '../../services/individual.service';
-import { FamilyService } from '../../services/family.service';
+import { GroupService } from '../../services/group.service';
 import { LocationService } from '../../services/location.service';
 import { LocationUpsertComponent } from '../location-upsert/location-upsert.component';
 import { PhoneNumberService } from '../../services/phone-number.service';
@@ -18,7 +18,7 @@ import { OptionsComponent } from '../options/options.component';
 import { Individual } from '../../models/individual';
 import { Subject, interval, Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Family } from '../../models/family';
+import { Group } from '../../models/group';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
 import { SortState } from '../../enum/sort-state';
 import { Location } from '../../models/location';
@@ -35,7 +35,7 @@ import { EntrancePortalComponent } from "../entrance-portal/entrance-portal.comp
   selector: 'app-nexus-portal',
   standalone: true,
   imports: [CommonModule, FormsModule, IndividualUpsertComponent,
-    FamilyUpsertComponent, IndividualLookupComponent,
+    IndividualLookupComponent, GroupUpsertComponent,
     LocationUpsertComponent, PhoneNumberUpsertComponent, OptionsComponent, EntrancePortalComponent],
   templateUrl: './nexus-portal.component.html',
   styleUrl: './nexus-portal.component.css',
@@ -61,7 +61,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   private pollingSubscription4?: Subscription = new Subscription();
   private pollingSubscription5?: Subscription = new Subscription();
   loadingLookup: boolean = false;
-  loadingFamily: boolean = false;
+  loadingGroup: boolean = false;
   loadingLocation: boolean = false;
   loadingPhoneNumber: boolean = false;
 
@@ -73,8 +73,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
 
   individualsMain: Individual[] = [];
   individualMain: Individual = new Individual();
-  familiesMain: Family[] = [];
-  familyMain: Family = new Family();
+  groupsMain: Group[] = [];
+  groupMain: Group = new Group();
   locationsMain: Location[] = [];
   locationMain: Location = new Location();
   individualLocationsMain: IndividualLocation[] = [];
@@ -90,7 +90,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   dropdownDtoPhoneNumberMain: DropdownDto[] = [];
 
   constructor(private cdr: ChangeDetectorRef, private individualService: IndividualService,
-    private familyService: FamilyService, private locationService: LocationService,
+    private groupService: GroupService, private locationService: LocationService,
     private individualTypeService: IndividualTypeService, private individualLocationsDtoService: IndividualLocationsDtoService,
     private individualLocationService: IndividualLocationService, private phoneNumberService: PhoneNumberService,
     private individualPhoneNumberService: IndividualPhoneNumberService)
@@ -122,8 +122,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
 
   activatePortal(portalId: number) : void{
     this.setPortalStates(portalId);
-    // Start polling when entering the IndividualLookup or FamilyLookup portal, stop when leaving
-    if (portalId === portal.IndividualLookup || portalId === portal.FamilyLookup || portalId === portal.IndividualUpsert
+    // Start polling when entering the IndividualLookup or GroupLookup portal, stop when leaving
+    if (portalId === portal.IndividualLookup || portalId === portal.GroupLookup || portalId === portal.IndividualUpsert
       || portalId === portal.LocationLookup || portalId === portal.LocationUpsert || portalId === portal.PhoneNumberLookup
       || portalId === portal.PhoneNumberUpsert
     ) {
@@ -152,18 +152,18 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     if (targetPortal === portal.IndividualLookup) {
       this.loadingLookup = true;
       fetchFn = () => this.individualService.getIndividualsByStatusId(status.Active);
-      fetchFn2 = () => this.familyService.getFamilies();
+      fetchFn2 = () => this.groupService.getGroups();
       fetchFn3 = () => this.locationService.getLocations();
       fetchFn4 = () => this.individualTypeService.getIndividualTypes();
       fetchFn5 = () => this.phoneNumberService.getPhoneNumbers();
-    } else if (targetPortal === portal.FamilyLookup) {
-      // familyService is injected optionally; if not available log and stop
-      if (!this.familyService || typeof this.familyService.getFamilies !== 'function') {
-        console.warn('Family service not available. Cannot start family polling.');
+    } else if (targetPortal === portal.GroupLookup) {
+      // groupService is injected optionally; if not available log and stop
+      if (!this.groupService || typeof this.groupService.getGroups !== 'function') {
+        console.warn('Group service not available. Cannot start group polling.');
         return;
       }
-      this.loadingFamily = true;
-      fetchFn = () => this.familyService.getFamilies();
+      this.loadingGroup = true;
+      fetchFn = () => this.groupService.getGroups();
       fetchFn2 = () => of([]);
     } else if (targetPortal === portal.LocationLookup) {
       // locationService is injected optionally; if not available log and stop
@@ -187,9 +187,9 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         fetchFn = () => this.phoneNumberService.getPhoneNumbersWithAssignedIndividualsByIndividualId(this.individualMain.individualId);
       else
         fetchFn = () => this.phoneNumberService.getPhoneNumbers();
-    } else if (targetPortal === portal.IndividualUpsert || targetPortal === portal.FamilyUpsert || targetPortal === portal.LocationUpsert) {
+    } else if (targetPortal === portal.IndividualUpsert || targetPortal === portal.GroupUpsert || targetPortal === portal.LocationUpsert) {
       fetchFn = () => of([]);
-      fetchFn2 = () => this.familyService.getFamilies();
+      fetchFn2 = () => this.groupService.getGroups();
       fetchFn3 = () => this.locationService.getLocationsByIndividualId(this.individualMain.individualId);
       fetchFn4 = () => this.individualTypeService.getIndividualTypes();
       fetchFn5 = () => this.phoneNumberService.getPhoneNumbersByIndividualId(this.individualMain.individualId);
@@ -203,10 +203,10 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.lookupDtoMain = [];
       
       for (const item of result || []) {
-        const id = item.individualId ?? item.familyId ?? item.id ?? item.locationId ?? item.phoneNumberId ?? item.phoneNumber?.[0]?.phoneNumberId ?? 0;
-        const secondId = item.familyId ?? item.secondId ?? 0;
+        const id = item.individualId ?? item.groupId ?? item.id ?? item.locationId ?? item.phoneNumberId ?? item.phoneNumber?.[0]?.phoneNumberId ?? 0;
+        const secondId = item.groupId ?? item.secondId ?? 0;
         const name = item.firstName ? `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim()
-                     : item.familyName ?? item.name ?? item.locationName ?? item.phoneNumberValue ?? item.phoneNumber?.[0]?.phoneNumberValue ?? '';
+                     : item.groupName ?? item.name ?? item.locationName ?? item.phoneNumberValue ?? item.phoneNumber?.[0]?.phoneNumberValue ?? '';
         const isAssigned = item.isAssigned ?? false;
         this.lookupDtoMain.push({ id, secondId, name, isAssigned });
       }
@@ -222,9 +222,9 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       if (targetPortal === portal.IndividualLookup) {
         this.individualsMain = result as Individual[];
         this.loadingLookup = false;
-      } else if (targetPortal === portal.FamilyLookup) {
-        this.familiesMain = result as Family[];
-        this.loadingFamily = false;
+      } else if (targetPortal === portal.GroupLookup) {
+        this.groupsMain = result as Group[];
+        this.loadingGroup = false;
       } else if (targetPortal === portal.LocationLookup) {
         this.locationsMain = result as Location[];
         this.loadingLocation = false;
@@ -255,9 +255,9 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       this.dropdownDtoMain = [];
 
       for (const item of result || []) {
-        const id = item.familyId ?? item.individualId ?? item.id ?? 0;
+        const id = item.groupId ?? item.individualId ?? item.id ?? 0;
         const name = item.firstName ? `${item.firstName} ${item.lastName ?? ''}`.trim()
-                     : item.familyName ?? item.name ?? '';
+                     : item.groupName ?? item.name ?? '';
         this.dropdownDtoMain.push({ id, name });
       }
       // trigger change detection if needed
@@ -312,7 +312,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
       (res: any[]) => handleResult(res),
       () => {
         if (targetPortal === portal.IndividualLookup) this.loadingLookup = false;
-        if (targetPortal === portal.FamilyLookup) this.loadingFamily = false;
+        if (targetPortal === portal.GroupLookup) this.loadingGroup = false;
         if (targetPortal === portal.LocationLookup) this.loadingLocation = false;
         if (targetPortal === portal.PhoneNumberLookup) this.loadingPhoneNumber = false;
       }
@@ -426,8 +426,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     
     if (this.portalState === portal.IndividualLookup)
       this.individualMain = this.individualsMain.find(ind => ind.individualId === $event.id) || new Individual();
-    if (this.portalState === portal.FamilyLookup)
-      this.familyMain = this.familiesMain.find(fam => fam.familyId === $event.id) || new Family();
+    if (this.portalState === portal.GroupLookup)
+      this.groupMain = this.groupsMain.find(fam => fam.groupId === $event.id) || new Group();
     if (this.portalState === portal.LocationLookup)
       this.locationMain = this.locationsMain.find(loc => loc.locationId === $event.id) || new Location();
     if (this.portalState === portal.PhoneNumberLookup)
@@ -437,7 +437,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
 
   resetData() {
     this.individualMain = new Individual();
-    this.familyMain = new Family();
+    this.groupMain = new Group();
     this.locationMain = new Location();
     this.phoneNumberMain = new PhoneNumber();
     return true;
