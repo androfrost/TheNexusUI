@@ -12,7 +12,7 @@ import { Pagination } from '../../helpers/pagination';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './individual-lookup.component.html',
-  styleUrl: './individual-lookup.component.css'
+  styleUrls: ['./individual-lookup.component.css']
 })
 export class IndividualLookupComponent implements OnChanges {
 

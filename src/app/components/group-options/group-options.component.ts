@@ -9,7 +9,7 @@ import { GroupService } from '../../services/group.service';
   standalone: true,
   imports: [],
   templateUrl: './group-options.component.html',
-  styleUrl: './group-options.component.css'
+  styleUrls: ['./group-options.component.css']
 })
 export class GroupOptionsComponent {
   portal = portal;

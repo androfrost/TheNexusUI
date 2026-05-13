@@ -10,7 +10,7 @@ import { LookupDto } from '../../models/dto/lookup-dto';
   standalone: true,
   imports: [],
   templateUrl: './individual-options.component.html',
-  styleUrl: './individual-options.component.css',
+  styleUrls: ['./individual-options.component.css'],
   providers: [IndividualService]
 })
 export class IndividualOptionsComponent {

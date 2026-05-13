@@ -13,7 +13,7 @@ import { IndividualLocationsDto } from '../../models/dto/individual-locations-dt
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './location-upsert.component.html',
-  styleUrl: './location-upsert.component.css',
+  styleUrls: ['./location-upsert.component.css'],
   providers: [LocationService]
 })
 export class LocationUpsertComponent {
