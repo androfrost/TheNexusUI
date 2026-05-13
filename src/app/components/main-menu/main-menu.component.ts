@@ -6,7 +6,7 @@ import { portal } from '../../enum/portal';
   standalone: true,
   imports: [],
   templateUrl: './main-menu.component.html',
-  styleUrl: './main-menu.component.css'
+  styleUrls: ['./main-menu.component.css']
 })
 export class MainMenuComponent {
   portal = portal;

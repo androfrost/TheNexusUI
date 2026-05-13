@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-popup',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './popup.component.html',
-  styleUrl: './popup.component.css'
+  styleUrls: ['./popup.component.css']
 })
 export class PopupComponent implements OnInit {
   @Input() title: string = "";
@@ -36,6 +37,8 @@ export class PopupComponent implements OnInit {
   passwordText: string = "Enter password here";
   passwordValue: string = "";
 
+  constructor(private toastService: ToastService) { }
+
   ngOnInit(): void {
     switch (this.popupType) {
       case 'info':
@@ -61,30 +64,15 @@ export class PopupComponent implements OnInit {
         break;
 
     }
-    
-    
-    // Get modal element
-    const modal = document.getElementById('myModal') as HTMLElement;
-    const btn = document.getElementById('openModalBtn') as HTMLElement;
+  }
 
-    // Show modal when button is clicked
-    if (btn) {
-      btn.onclick = () => {
-        if (modal) {
-          modal.style.display = 'block';
-        }
-      };
+  @HostListener('window:click', ['$event'])
+  onWindowClick(event: MouseEvent): void {
+    const modal = document.getElementById('myModal') as HTMLElement | null;
+    if (event.target === modal && modal && !this.isArduous) {
+      modal.style.display = 'none';
+      this.closed.emit();
     }
-
-    // Close modal when clicking outside modal content
-    window.onclick = (event) => {
-      if (event.target === modal && !this.isArduous) {
-        if (modal) {
-          modal.style.display = 'none';
-        }
-        this.closed.emit();
-      }
-    };
   }
 
   returnValues(): void {
@@ -99,18 +87,22 @@ export class PopupComponent implements OnInit {
     }
 
     if (hasReturnValues) {
-      this.hasReturnValues.emit(hasReturnValues)
+      this.hasReturnValues.emit(hasReturnValues);
+      this.closeModal();
     }
-
-    this.closeModal();
   }
 
-  closeModal(): void {
+  closeModal(isCanceled: boolean = false): void {
     const modal = document.getElementById('myModal') as HTMLElement;
     if (modal) {
       modal.style.display = 'none';
     }
     this.closed.emit();
+
+    if (isCanceled) {
+      var message = "Process Canceled";
+      this.toastService.zoneRun(message, 'info');
+    }
   }
 
   isSendButtonVisible(): boolean {

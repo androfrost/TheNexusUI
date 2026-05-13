@@ -9,7 +9,7 @@ import { LookupDto } from '../../models/dto/lookup-dto';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './options.component.html',
-  styleUrl: './options.component.css',
+  styleUrls: ['./options.component.css'],
   providers: []
 })
 export class OptionsComponent {

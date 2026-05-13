@@ -15,7 +15,7 @@ import { Navigation } from '../../helpers/navigation';
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './individual-upsert.component.html',
-  styleUrl: './individual-upsert.component.css',
+  styleUrls: ['./individual-upsert.component.css'],
   providers: [IndividualService]
 })
 export class IndividualUpsertComponent implements OnChanges, AfterViewInit{

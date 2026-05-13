@@ -14,7 +14,7 @@ import { DataFormatting } from '../../helpers/data-formatting';
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './phone-number-upsert.component.html',
-  styleUrl: './phone-number-upsert.component.css',
+  styleUrls: ['./phone-number-upsert.component.css'],
   providers: [PhoneNumberService]
 })
 export class PhoneNumberUpsertComponent {

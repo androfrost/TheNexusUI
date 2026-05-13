@@ -12,7 +12,7 @@ import { Navigation } from '../../helpers/navigation';
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './group-upsert.component.html',
-  styleUrl: './group-upsert.component.css',
+  styleUrls: ['./group-upsert.component.css'],
   providers: [GroupService]
 })
 export class GroupUpsertComponent {

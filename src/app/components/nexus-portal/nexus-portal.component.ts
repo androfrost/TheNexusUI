@@ -38,7 +38,7 @@ import { EntrancePortalComponent } from "../entrance-portal/entrance-portal.comp
     IndividualLookupComponent, GroupUpsertComponent,
     LocationUpsertComponent, PhoneNumberUpsertComponent, OptionsComponent, EntrancePortalComponent],
   templateUrl: './nexus-portal.component.html',
-  styleUrl: './nexus-portal.component.css',
+  styleUrls: ['./nexus-portal.component.css'],
   providers: [IndividualService]
 })
 export class NexusPortalComponent implements OnInit, OnDestroy {
@@ -93,7 +93,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
     private groupService: GroupService, private locationService: LocationService,
     private individualTypeService: IndividualTypeService, private individualLocationsDtoService: IndividualLocationsDtoService,
     private individualLocationService: IndividualLocationService, private phoneNumberService: PhoneNumberService,
-    private individualPhoneNumberService: IndividualPhoneNumberService)
+    private individualPhoneNumberService: IndividualPhoneNumberService
+  )
   {
   }
 

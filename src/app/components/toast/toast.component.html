@@ -1,0 +1,13 @@
+<div
+  class="toast"
+  [ngClass]="getToastClass(toast.type)"
+  @toastAnimation
+>
+  <div class="toast-icon">
+    <!-- icons -->
+  </div>
+
+  <div class="toast-message">{{ toast.message }}</div>
+
+  <button class="toast-close" (click)="removeToast(toast.id)">×</button>
+</div>
