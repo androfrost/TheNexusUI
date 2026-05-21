@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from "../../environment/environment";
 import { Observable } from 'rxjs/internal/Observable';
 import { Individual } from "../models/individual";
-//import { HttpClientModule } from '@angular/common/http';  
+import { ApiToasts } from '../helpers/api-toasts';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,11 @@ import { Individual } from "../models/individual";
 
 export class IndividualService {
   private url = "Individual";
+  ApiToasts: ApiToasts;
   
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private toastService: ToastService) {
+    this.ApiToasts = new ApiToasts(this.toastService);
+  }
 
   public getIndividuals() : Observable<Individual[]> {
     return this.http.get<Individual[]>(`${environment.APIUrl}/${this.url}`);

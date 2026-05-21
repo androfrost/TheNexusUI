@@ -97,15 +97,11 @@ export class LocationUpsertComponent {
           }
         });
       } else{
-        this.locationService.addLocation(this.upsertLocation).subscribe({
-          next: (result: Location) => {
-            console.log('addLocation success:', result);
-            this.upsertLocation = result;
-          },
-          error: (error) => {
-            console.error('addLocation error:', error);
-          }
-        });
+          this.locationService.ApiToasts
+            .mapTest(this.locationService.addLocation(this.upsertLocation), "locationId", "Location", this.upsertLocation.locationName || this.upsertLocation.address || "New Location")
+            .subscribe((result: Location) => {
+              this.upsertLocation = result;
+          });
       }
 
     // Call cancel to reset and exit

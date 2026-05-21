@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/internal/Observable';
 import { PhoneNumber } from "../models/phone-number";
 import { IndividualPhoneNumbersDto } from '../models/dto/individual-phone-number-dto';
 import { PhoneNumbersWithAssignedIndividualDto } from '../models/dto/phone-numbers-with-assigned-individual-dto';
+import { ApiToasts } from '../helpers/api-toasts';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +14,12 @@ import { PhoneNumbersWithAssignedIndividualDto } from '../models/dto/phone-numbe
 
 export class PhoneNumberService {
   private url = "PhoneNumber";
+  ApiToasts: ApiToasts;
+    
+  constructor(private http: HttpClient, private toastService: ToastService) {
+    this.ApiToasts = new ApiToasts(this.toastService);
+  }
   
-  constructor(private http: HttpClient) { }
-
   public getPhoneNumbers() : Observable<PhoneNumber[]> {
     return this.http.get<PhoneNumber[]>(`${environment.APIUrl}/${this.url}`);
   }

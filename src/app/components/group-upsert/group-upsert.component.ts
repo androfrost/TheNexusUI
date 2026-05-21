@@ -27,7 +27,7 @@ export class GroupUpsertComponent {
 
   groupName: string = this.upsertGroup.groupName;
   groupDescription: string = this.upsertGroup.groupDescription;
-  groups: string[] =  ["Choose Group","Family", "Work", "Friends", "Other"];
+  groupTypes: string[] =  ["Choose Group","Family", "Work", "Friends", "Other"];
   groupOption: number = 0;
   
   isUpdate: boolean = false;
@@ -64,7 +64,11 @@ export class GroupUpsertComponent {
     if (this.isUpdate)
       this.groupService.updateGroup(this.upsertGroup).subscribe((result: Group) => (this.upsertGroup = result));
     else
-      this.groupService.addGroup(this.upsertGroup).subscribe((result: Group) => (this.upsertGroup = result));
+      this.groupService.ApiToasts
+        .mapTest(this.groupService.addGroup(this.upsertGroup), "groupId", "Group", this.upsertGroup.groupName)
+        .subscribe((result: Group) => {
+          this.upsertGroup = result;
+        });
 
     // Call cancel to reset and exit
     this.Cancel();
