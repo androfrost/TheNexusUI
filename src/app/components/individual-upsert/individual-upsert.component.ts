@@ -61,11 +61,6 @@ export class IndividualUpsertComponent implements OnChanges, AfterViewInit{
 
   ngOnInit(): void {
 
-    this.groups = Array.isArray(this.dropdownDto) ? [...this.dropdownDto] : [];
-      if (!this.groups.find(f => f.id === 0)) {
-        this.groups.unshift({ id: 0, name: 'Choose Group' } as DropdownDto);
-      }
-
     // Determine if this is an update or add based on presence of IndividualId
     // If update, set all fields to match the input individual
     // If add, reset all fields to blank/zero
@@ -89,28 +84,28 @@ export class IndividualUpsertComponent implements OnChanges, AfterViewInit{
   }
 
 ngOnChanges(changes: SimpleChanges): void {
-    if (changes['dropdownDto']) {
+    if (changes['dropdownDto'] && this.groups.length <= 1) {
       this.groups = Array.isArray(this.dropdownDto) ? [...this.dropdownDto] : [];
       if (!this.groups.find(f => f.id === 0)) {
         this.groups.unshift({ id: 0, name: 'Choose Group' } as DropdownDto);
       }
     }
 
-    if (changes['locationDropdownDto']) {
+    if (changes['locationDropdownDto'] && this.locations.length <= 1) {
       this.locations = Array.isArray(this.locationDropdownDto) ? [...this.locationDropdownDto] : [];
       if (!this.locations.find(l => l.id === 0)) {
         this.locations.unshift({ id: 0, name: 'Choose Location' } as DropdownDto);
       }
     }
 
-    if (changes['phoneNumberDropdownDto']) {
+    if (changes['phoneNumberDropdownDto'] && this.phoneNumbers.length <= 1) {
       this.phoneNumbers = Array.isArray(this.phoneNumberDropdownDto) ? [...this.phoneNumberDropdownDto] : [];
       if (!this.phoneNumbers.find(p => p.id === 0)) {
         this.phoneNumbers.unshift({ id: 0, name: 'Choose Phone Number' } as DropdownDto);
       }
     }
 
-    if (changes['individualTypeDropdownDto']) {
+    if (changes['individualTypeDropdownDto'] && this.individualTypes.length <= 1) {
       this.individualTypes = Array.isArray(this.individualTypeDropdownDto) ? [...this.individualTypeDropdownDto] : [];
       if (!this.individualTypes.find(t => t.id === 0)) {
         this.individualTypes.unshift({ id: 0, name: 'Choose Type' } as DropdownDto);
@@ -150,8 +145,11 @@ ngOnChanges(changes: SimpleChanges): void {
     if (this.isUpdate)
       this.individualService.updateIndividual(this.upsertIndividual).subscribe((result: Individual) => (this.upsertIndividual = result));
     else
-      this.individualService.addIndividual(this.upsertIndividual).subscribe((result: Individual) => (this.upsertIndividual = result));
-
+      this.individualService.ApiToasts
+        .mapTest(this.individualService.addIndividual(this.upsertIndividual), "individualId", "Individual", this.upsertIndividual.firstName)
+        .subscribe((result: Individual) => {
+          this.upsertIndividual = result;
+        });
     // Call cancel to reset and exit
     this.Cancel();
   }

@@ -3,16 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from "../../environment/environment";
 import { Observable } from 'rxjs/internal/Observable';
 import { Group } from "../models/group";
-//import { HttpClientModule } from '@angular/common/http';  
-
+import { ToastService } from './toast.service';
+import { ApiToasts } from '../helpers/api-toasts';
 @Injectable({
   providedIn: 'root'
 })
 
 export class GroupService {
   private url = "Group";
-  
-  constructor(private http: HttpClient) { }
+  ApiToasts: ApiToasts;
+
+  constructor(private http: HttpClient, private toastService: ToastService) { 
+     this.ApiToasts = new ApiToasts(this.toastService)
+  }
 
   public getGroups() : Observable<Group[]> {
     return this.http.get<Group[]>(`${environment.APIUrl}/${this.url}`);
@@ -29,4 +32,5 @@ export class GroupService {
   public addGroup(group: Group) : Observable<Group> {
     return this.http.post<Group>(`${environment.APIUrl}/${this.url}`, group);
   }
+
 }

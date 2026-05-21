@@ -5,7 +5,8 @@ import { Observable } from 'rxjs/internal/Observable';
 import { Location } from "../models/location";
 import { IndividualLocationsDto } from '../models/dto/individual-locations-dto';
 import { LocationsWithAssignedIndividualDto } from '../models/dto/locations-with-assigned-individual-dto';
-//import { HttpClientModule } from '@angular/common/http';  
+import { ApiToasts } from '../helpers/api-toasts';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,11 @@ import { LocationsWithAssignedIndividualDto } from '../models/dto/locations-with
 
 export class LocationService {
   private url = "Location";
+  ApiToasts: ApiToasts;
   
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private toastService: ToastService) {
+    this.ApiToasts = new ApiToasts(this.toastService);
+   }
 
   public getLocations() : Observable<Location[]> {
     return this.http.get<Location[]>(`${environment.APIUrl}/${this.url}`);

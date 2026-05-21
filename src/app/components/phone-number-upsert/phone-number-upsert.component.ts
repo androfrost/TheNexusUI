@@ -102,14 +102,10 @@ export class PhoneNumberUpsertComponent {
           }
         });
       } else{
-        this.phoneNumberService.addPhoneNumber(this.upsertPhoneNumber).subscribe({
-          next: (result: PhoneNumber) => {
-            console.log('addPhoneNumber success:', result);
+        this.phoneNumberService.ApiToasts
+          .mapTest(this.phoneNumberService.addPhoneNumber(this.upsertPhoneNumber), "phoneNumberId", "Phone Number", this.upsertPhoneNumber.phoneNumberValue)
+          .subscribe((result: PhoneNumber) => {
             this.upsertPhoneNumber = result;
-          },
-          error: (error) => {
-            console.error('addPhoneNumber error:', error);
-          }
         });
       }
 
