@@ -7,7 +7,7 @@
             Group
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-gro" id="drop-gro" (change)="GetChosenGroup()" [(ngModel)]="groupOption">
+            <select class="drop-gro" id="drop-gro" (change)="getChosenFieldValue('drop-gro', 'groupOption')" [(ngModel)]="groupOption">
                 <option *ngFor="let group of groups; let i = index" [value]="i">{{ group.name }}</option>
             </select>
         </div>
@@ -18,7 +18,7 @@
             Type
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-typ" id="drop-typ" (change)="GetChosenType()" [(ngModel)]="individualTypeOption">
+            <select class="drop-typ" id="drop-typ" (change)="getChosenFieldValue('drop-typ', 'individualTypeOption')" [(ngModel)]="individualTypeOption">
                 <option *ngFor="let type of individualTypes; let i = index" [value]="type.id">{{ type.name }}</option>
             </select>
         </div>
@@ -47,7 +47,7 @@
             Sex
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-sex" id="drop-sex" (change)="GetChosenSex()" [(ngModel)]="sexOption">
+            <select class="drop-sex" id="drop-sex" (change)="getChosenFieldValue('drop-sex', 'sexOption')" [(ngModel)]="sexOption">
                 <option *ngFor="let sex of sexes; let i = index" [value]="i">{{ sex }}</option>
             </select>
         </div>
@@ -69,7 +69,7 @@
         <div class="col-12 col-sm-6">
             <div class="row">
                 <div class="col-9 col-sm-7">
-                    <select class="drop-loc" id="drop-loc" (change)="GetChosenLocation()" [(ngModel)]="locationOption">
+                    <select class="drop-loc" id="drop-loc" (change)="getChosenFieldValue('drop-loc', 'locationOption')" [(ngModel)]="locationOption">
                         <option *ngFor="let location of locations; let i = index" [value]="i">{{ location.name }}</option>
                     </select>
                 </div>
@@ -90,7 +90,7 @@
         <div class="col-12 col-sm-6">
             <div class="row">
                 <div class="col-9 col-sm-7">
-                    <select class="drop-pho" id="drop-pho" (change)="GetChosenPhoneNumber()" [(ngModel)]="phoneNumberOption">
+                    <select class="drop-pho" id="drop-pho" (change)="getChosenFieldValue('drop-pho', 'phoneNumberOption')" [(ngModel)]="phoneNumberOption">
                         <option *ngFor="let phoneNumber of phoneNumbers; let i = index" [value]="i">{{ phoneNumber.name }}</option>
                     </select>
                 </div>
@@ -117,7 +117,7 @@
             Status
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-sta" id="drop-sta" (change)="GetChosenStatus()" [(ngModel)]="statusOption">
+            <select class="drop-sta" id="drop-sta" (change)="getChosenFieldValue('drop-sta', 'statusOption')" [(ngModel)]="statusOption">
                 <option *ngFor="let status of statuses; let i = index" [value]="i">{{ status }}</option>
             </select>
         </div>

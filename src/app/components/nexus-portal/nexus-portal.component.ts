@@ -188,12 +188,26 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         fetchFn = () => this.phoneNumberService.getPhoneNumbersWithAssignedIndividualsByIndividualId(this.individualMain.individualId);
       else
         fetchFn = () => this.phoneNumberService.getPhoneNumbers();
-    } else if (targetPortal === portal.IndividualUpsert || targetPortal === portal.GroupUpsert || targetPortal === portal.LocationUpsert) {
+    } else if (targetPortal === portal.IndividualUpsert) {
       fetchFn = () => of([]);
       fetchFn2 = () => this.groupService.getGroups();
-      fetchFn3 = () => this.locationService.getLocationsByIndividualId(this.individualMain.individualId);
+      fetchFn3 = () => {
+        const id = this.individualMain?.individualId ?? 0;
+        console.debug('IndividualUpsert: fetching locations for individualId=', id);
+        return id > 0 ? this.locationService.getLocationsByIndividualId(id) : of([]);
+      };
       fetchFn4 = () => this.individualTypeService.getIndividualTypes();
-      fetchFn5 = () => this.phoneNumberService.getPhoneNumbersByIndividualId(this.individualMain.individualId);
+      fetchFn5 = () => {
+        const id = this.individualMain?.individualId ?? 0;
+        console.debug('IndividualUpsert: fetching phone numbers for individualId=', id);
+        return id > 0 ? this.phoneNumberService.getPhoneNumbersByIndividualId(id) : of([]);
+      };
+    } else if (targetPortal === portal.GroupUpsert || targetPortal === portal.LocationUpsert) {
+      fetchFn = () => of([]);
+      fetchFn2 = () => this.groupService.getGroups();
+      fetchFn3 = () => of([]);
+      fetchFn4 = () => this.individualTypeService.getIndividualTypes();
+      fetchFn5 = () => of([]);
     } else {
       // unsupported portal for polling
       return;
