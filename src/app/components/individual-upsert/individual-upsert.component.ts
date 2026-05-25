@@ -56,6 +56,9 @@ export class IndividualUpsertComponent implements OnChanges, AfterViewInit{
   navigation = Navigation;
   portal = portal;
 
+  locationLength: number = 0;
+  phoneNumberLength: number = 0;
+
   constructor(private individualService: IndividualService) {
   }
 
@@ -78,9 +81,12 @@ export class IndividualUpsertComponent implements OnChanges, AfterViewInit{
     this.statusOption = this.upsertIndividual.statusId;
     this.sexOption = this.upsertIndividual.sexId;
     this.dateOfBirthDate = this.upsertIndividual.dateOfBirth;
-    this.SetChosenGroup(this.upsertIndividual.groupId);
-    this.locationOption = this.upsertIndividual.locationId;
-    this.phoneNumberOption = this.upsertIndividual.phoneNumberId;
+    this.setChosenOption(this.upsertIndividual.groupId, 'groupOption');
+    this.locationOption = this.findArrayIndex(this.locations, this.upsertIndividual.locationId);
+    this.phoneNumberOption = this.findArrayIndex(this.phoneNumbers, this.upsertIndividual.phoneNumberId);
+
+    this.locationLength = this.locationDropdownDto.length;
+    this.phoneNumberLength = this.phoneNumberDropdownDto.length;
   }
 
 ngOnChanges(changes: SimpleChanges): void {
@@ -91,18 +97,22 @@ ngOnChanges(changes: SimpleChanges): void {
       }
     }
 
-    if (changes['locationDropdownDto'] && this.locations.length <= 1) {
+    if (changes['locationDropdownDto'] && this.locationLength !== this.locationDropdownDto.length) { // && this.locations.length <= 1) {
       this.locations = Array.isArray(this.locationDropdownDto) ? [...this.locationDropdownDto] : [];
       if (!this.locations.find(l => l.id === 0)) {
         this.locations.unshift({ id: 0, name: 'Choose Location' } as DropdownDto);
       }
+      this.locationLength = this.locationDropdownDto.length;
+      this.locationOption = this.findArrayIndex(this.locations, this.upsertIndividual.locationId);
     }
 
-    if (changes['phoneNumberDropdownDto'] && this.phoneNumbers.length <= 1) {
+    if (changes['phoneNumberDropdownDto'] && this.phoneNumberLength !== this.phoneNumberDropdownDto.length) {   //&& this.phoneNumbers.length <= 1) {
       this.phoneNumbers = Array.isArray(this.phoneNumberDropdownDto) ? [...this.phoneNumberDropdownDto] : [];
       if (!this.phoneNumbers.find(p => p.id === 0)) {
         this.phoneNumbers.unshift({ id: 0, name: 'Choose Phone Number' } as DropdownDto);
       }
+      this.phoneNumberLength = this.phoneNumberDropdownDto.length;
+      this.phoneNumberOption = this.findArrayIndex(this.phoneNumbers, this.upsertIndividual.phoneNumberId);
     }
 
     if (changes['individualTypeDropdownDto'] && this.individualTypes.length <= 1) {
@@ -139,8 +149,8 @@ ngOnChanges(changes: SimpleChanges): void {
     this.upsertIndividual.sexId = this.sexOption;
     this.upsertIndividual.dateOfBirth = this.dateOfBirthDate; 
     this.upsertIndividual.groupId = this.groups[this.groupOption]?.id || 0;
-    this.upsertIndividual.locationId = this.locationOption;
-    this.upsertIndividual.phoneNumberId = this.phoneNumberOption;
+    this.upsertIndividual.locationId = this.findArrayId(this.locations, this.locationOption);
+    this.upsertIndividual.phoneNumberId = this.findArrayId(this.phoneNumbers, this.phoneNumberOption);
     // Call appropriate service function based on add vs update
     if (this.isUpdate)
       this.individualService.updateIndividual(this.upsertIndividual).subscribe((result: Individual) => (this.upsertIndividual = result));
@@ -159,20 +169,20 @@ ngOnChanges(changes: SimpleChanges): void {
     this.firstName = "";
     this.lastName = "";
     this.individualTypeOption = 0;
-    this.SetChosenType(this.individualTypeOption);
+    this.setChosenFieldValue('drop-typ', this.individualTypeOption);
     this.sexOption = 0;
-    this.SetChosenSex(this.sexOption);
+    this.setChosenFieldValue('drop-sex', this.sexOption);
     this.dateOfBirthDate = new Date();
     this.dateOfBirthString = "";
     this.groupOption = 0;
-    this.SetChosenGroup(this.groupOption);
+    this.setChosenOption(this.upsertIndividual.groupId, 'groupOption');
     this.locationOption = 0;
-    this.SetChosenLocation(this.locationOption);
+    this.setChosenFieldValueWithArray('drop-loc', this.locations, this.locationOption);
     this.phoneNumberOption = 0;
-    this.SetChosenPhoneNumber(this.phoneNumberOption);
+    this.setChosenFieldValueWithArray('drop-pho', this.phoneNumbers, this.phoneNumberOption);
     this.description = "";
     this.statusOption = 0;
-    this.SetChosenStatus(this.statusOption);
+    this.setChosenFieldValue('drop-sta', this.statusOption);
   }
 
   Cancel(){
@@ -182,71 +192,42 @@ ngOnChanges(changes: SimpleChanges): void {
     this.goToNextPortal.emit(returnPortal);
   }
 
-  GetChosenType() : void{
-    let chosenType = document.getElementById("drop-typ") as HTMLSelectElement;
-    this.individualTypeOption = chosenType.selectedIndex;
-  }
-
-  SetChosenType(typeId: number) : void{
-    let chosenType = document.getElementById("drop-typ") as HTMLSelectElement;
-    chosenType.selectedIndex = this.individualTypeOption;
-  }
-  
-  GetChosenSex() : void{
-    let chosenSex = document.getElementById("drop-sex") as HTMLSelectElement;
-    this.sexOption = chosenSex.selectedIndex;
-  }
-
-  SetChosenSex(typeId: number) : void{
-    let chosenSex = document.getElementById("drop-sex") as HTMLSelectElement;
-    chosenSex.selectedIndex = typeId;
-  }
-
-  GetChosenLocation() : void{
-    let chosenLocation = document.getElementById("drop-loc") as HTMLSelectElement;
-    this.locationOption = chosenLocation.selectedIndex;
-  }
-
-  SetChosenLocation(typeId: number) : void{
-    let chosenLocation = document.getElementById("drop-loc") as HTMLSelectElement;
-    chosenLocation.selectedIndex = typeId;
-  }
-
-  GetChosenGroup() : void{
-    let chosenGroup = document.getElementById("drop-gro") as HTMLSelectElement;
-    this.groupOption = chosenGroup.selectedIndex;
-  }
-
-  SetChosenGroup(typeId: number) : void{
-    const foundIndex = this.groups.findIndex(f => f.id === typeId);
-    this.groupOption = foundIndex >= 0 ? foundIndex : 0;
-  }
-
-  GetChosenPhoneNumber() : void{
-    let chosenPhoneNumber = document.getElementById("drop-pho") as HTMLSelectElement;
-    this.phoneNumberOption = chosenPhoneNumber.selectedIndex;
-  }
-
-  SetChosenPhoneNumber(typeId: number) : void{
-    let chosenPhoneNumber = document.getElementById("drop-pho") as HTMLSelectElement;
-    chosenPhoneNumber.selectedIndex = typeId;
-  }
-
-  GetChosenStatus() : void{
-    let chosenStatus = document.getElementById("drop-sta") as HTMLSelectElement;
-    this.statusOption = chosenStatus.selectedIndex;
-  }
-
-  SetChosenStatus(typeId: number) : void{
-    let chosenStatus = document.getElementById("drop-sta") as HTMLSelectElement;
-    chosenStatus.selectedIndex = typeId;
-  }
-
   ngAfterViewInit(): void {
-    this.SetChosenGroup(this.upsertIndividual.groupId);
+    this.setChosenOption(this.upsertIndividual.groupId, 'groupOption');
+  }
+
+  getChosenFieldValue(element: string, fieldOption: keyof IndividualUpsertComponent) : void{
+    let chosenElement = document.getElementById(element) as HTMLSelectElement;
+    (this as any)[fieldOption] = chosenElement.selectedIndex;
+  }
+
+  setChosenFieldValue(element: string, typeId: number) : void{
+    let chosenElement = document.getElementById(element) as HTMLSelectElement;
+    chosenElement.selectedIndex = typeId;
+  }
+
+  setChosenFieldValueWithArray<T extends Array<any>>(element: string, valueT: T, typeId: number) : void{
+    let chosenElement = document.getElementById(element) as HTMLSelectElement;
+    chosenElement.selectedIndex = this.findArrayIndex(valueT, typeId);
+ }
+
+  setChosenOption(typeId: number, fieldOption: keyof IndividualUpsertComponent) : void{
+    const foundIndex = this.groups.findIndex(f => f.id === typeId);
+    (this as any)[fieldOption] = foundIndex >= 0 ? foundIndex : 0;
   }
 
   updateDateForSaving(){
     this.dateOfBirthDate = new Date(this.dateOfBirthString);
+  }
+
+  // General function to find id in any array of objects based on index, returns 0 if not found
+  findArrayId<T extends Array<any>>(array: T, index: number) : number{
+    return array[index]?.id || 0;
+  }
+
+  // General function to find index in any array of objects based on id, returns 0 if not found
+  findArrayIndex<T extends Array<any>>(array: T, typeId: number) : number{
+    const foundIndex = array.findIndex(l => l.id === typeId);
+    return foundIndex >= 0 ? foundIndex : 0;
   }
 }
