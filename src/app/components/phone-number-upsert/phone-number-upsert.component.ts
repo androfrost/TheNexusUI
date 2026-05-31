@@ -27,7 +27,7 @@ export class PhoneNumberUpsertComponent {
   @Output() goToNextPortal = new EventEmitter<number>();
   @Output() selectedItemChange = new EventEmitter<boolean>();
   
-  private isUpdate: boolean = false;
+  isUpdate: boolean = false;
   private navigation = Navigation
 
   private _phoneNumberValue: string = "";

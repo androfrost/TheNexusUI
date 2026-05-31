@@ -106,7 +106,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
   // Used for main Nexus entrance portal only, if moved to own component then move this there instead
   // Sets popup and can be reused in other components that use popups
   setUserName(name: string) {
-    this.userName = name;
+    this.userName = name ? name : "Guest";
   }
 
   setUserNameFlag(needToGetUserName: boolean) {
