@@ -13,7 +13,7 @@
                 <label>{{ inputLabel }}</label>
             </div>
             <div class="col-6">
-                <input type="text" [placeholder]="inputText" [(ngModel)]="inputValue" />
+                <input type="text" [placeholder]="inputText" [(ngModel)]="inputValue" maxlength="30" />
             </div>
         </div>
         <div class="row" *ngIf="isPasswordVisible()">
@@ -21,7 +21,7 @@
                 <label>{{ passwordLabel }}</label>
             </div>
             <div class="col-6">
-                <input type="password" [placeholder]="passwordText" [(ngModel)]="passwordValue" />
+                <input type="password" [placeholder]="passwordText" [(ngModel)]="passwordValue" maxlength="30" />
             </div>
         </div>
         <div class="row">

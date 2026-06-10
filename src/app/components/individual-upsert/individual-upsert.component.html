@@ -32,7 +32,7 @@
             First Name
         </div>
         <div class="col-12 col-sm-6">
-            <input type="text" [(ngModel)]="firstName">
+            <input type="text" [(ngModel)]="firstName" maxlength="50">
         </div>
     </div>
     <hr>
@@ -41,7 +41,7 @@
             Last Name
         </div>
         <div class="col-12 col-sm-6">
-            <input type="text" [(ngModel)]="lastName">
+            <input type="text" [(ngModel)]="lastName" maxlength="50">
         </div>
     </div>
     <hr>
@@ -111,7 +111,7 @@
             Description
         </div>
         <div class="col-12 col-sm-6">
-            <textarea [(ngModel)]="description" rows="3"></textarea>
+            <textarea [(ngModel)]="description" rows="3" maxlength="500"></textarea>
         </div>
     </div>
     <hr>
