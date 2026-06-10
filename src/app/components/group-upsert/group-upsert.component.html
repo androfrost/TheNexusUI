@@ -10,7 +10,7 @@
             Group Name
         </div>
         <div class="col-12 col-sm-6">
-            <input type="text" [(ngModel)]="groupName">
+            <input type="text" [(ngModel)]="groupName" maxlength="50">
         </div>
     </div>
     <hr>
@@ -30,7 +30,7 @@
             Description
         </div>
         <div class="col-12 col-sm-6">
-            <textarea [(ngModel)]="groupDescription" rows="3"></textarea>
+            <textarea [(ngModel)]="groupDescription" rows="3" maxlength="200"></textarea>
         </div>
     </div>
     <div class="col-12">
