@@ -68,7 +68,7 @@ export class PopupComponent implements OnInit {
 
   @HostListener('window:click', ['$event'])
   onWindowClick(event: MouseEvent): void {
-    const modal = document.getElementById('myModal') as HTMLElement | null;
+    const modal = document.getElementById('myModal');
     if (event.target === modal && modal && !this.isArduous) {
       modal.style.display = 'none';
       this.closed.emit();
@@ -76,7 +76,7 @@ export class PopupComponent implements OnInit {
   }
 
   returnValues(): void {
-    var hasReturnValues = false;
+    let hasReturnValues = false;
     if (this.inputVisible){
       this.inputValueChange.emit(this.inputValue);
       hasReturnValues = true;
@@ -100,7 +100,7 @@ export class PopupComponent implements OnInit {
     this.closed.emit();
 
     if (isCanceled) {
-      var message = "Process Canceled";
+      const message = "Process Canceled";
       this.toastService.zoneRun(message, 'info');
     }
   }

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, SimpleChanges, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges, OnChanges, AfterViewInit, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Individual } from '../../models/individual';
 import { status } from '../../enum/status';
 import { IndividualService } from '../../services/individual.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { portal } from '../../enum/portal';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
 import { DataFormatting } from '../../helpers/data-formatting';
@@ -18,7 +18,7 @@ import { Navigation } from '../../helpers/navigation';
   styleUrls: ['./individual-upsert.component.css'],
   providers: [IndividualService]
 })
-export class IndividualUpsertComponent implements OnChanges, AfterViewInit{
+export class IndividualUpsertComponent implements OnChanges, AfterViewInit, OnInit{
 
   status = status;
 
@@ -93,14 +93,14 @@ ngOnChanges(changes: SimpleChanges): void {
     if (changes['dropdownDto'] && this.groups.length <= 1) {
       this.groups = Array.isArray(this.dropdownDto) ? [...this.dropdownDto] : [];
       if (!this.groups.find(f => f.id === 0)) {
-        this.groups.unshift({ id: 0, name: 'Choose Group' } as DropdownDto);
+        this.groups.unshift({ id: 0, name: 'Choose Group' });
       }
     }
 
     if (changes['locationDropdownDto'] && this.locationLength !== this.locationDropdownDto.length) { // && this.locations.length <= 1) {
       this.locations = Array.isArray(this.locationDropdownDto) ? [...this.locationDropdownDto] : [];
       if (!this.locations.find(l => l.id === 0)) {
-        this.locations.unshift({ id: 0, name: 'Choose Location' } as DropdownDto);
+        this.locations.unshift({ id: 0, name: 'Choose Location' });
       }
       this.locationLength = this.locationDropdownDto.length;
       this.locationOption = this.findArrayIndex(this.locations, this.upsertIndividual.locationId);
@@ -109,7 +109,7 @@ ngOnChanges(changes: SimpleChanges): void {
     if (changes['phoneNumberDropdownDto'] && this.phoneNumberLength !== this.phoneNumberDropdownDto.length) {   //&& this.phoneNumbers.length <= 1) {
       this.phoneNumbers = Array.isArray(this.phoneNumberDropdownDto) ? [...this.phoneNumberDropdownDto] : [];
       if (!this.phoneNumbers.find(p => p.id === 0)) {
-        this.phoneNumbers.unshift({ id: 0, name: 'Choose Phone Number' } as DropdownDto);
+        this.phoneNumbers.unshift({ id: 0, name: 'Choose Phone Number' });
       }
       this.phoneNumberLength = this.phoneNumberDropdownDto.length;
       this.phoneNumberOption = this.findArrayIndex(this.phoneNumbers, this.upsertIndividual.phoneNumberId);
@@ -118,7 +118,7 @@ ngOnChanges(changes: SimpleChanges): void {
     if (changes['individualTypeDropdownDto'] && this.individualTypes.length <= 1) {
       this.individualTypes = Array.isArray(this.individualTypeDropdownDto) ? [...this.individualTypeDropdownDto] : [];
       if (!this.individualTypes.find(t => t.id === 0)) {
-        this.individualTypes.unshift({ id: 0, name: 'Choose Type' } as DropdownDto);
+        this.individualTypes.unshift({ id: 0, name: 'Choose Type' });
       }
     }
 
@@ -188,7 +188,7 @@ ngOnChanges(changes: SimpleChanges): void {
   Cancel(){
     // Do Reset followed by returning to previous screen
     this.Reset();
-    var returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
+    const returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
     this.goToNextPortal.emit(returnPortal);
   }
 
@@ -197,17 +197,17 @@ ngOnChanges(changes: SimpleChanges): void {
   }
 
   getChosenFieldValue(element: string, fieldOption: keyof IndividualUpsertComponent) : void{
-    let chosenElement = document.getElementById(element) as HTMLSelectElement;
+    const chosenElement = document.getElementById(element) as HTMLSelectElement;
     (this as any)[fieldOption] = chosenElement.selectedIndex;
   }
 
   setChosenFieldValue(element: string, typeId: number) : void{
-    let chosenElement = document.getElementById(element) as HTMLSelectElement;
+    const chosenElement = document.getElementById(element) as HTMLSelectElement;
     chosenElement.selectedIndex = typeId;
   }
 
   setChosenFieldValueWithArray<T extends Array<any>>(element: string, valueT: T, typeId: number) : void{
-    let chosenElement = document.getElementById(element) as HTMLSelectElement;
+    const chosenElement = document.getElementById(element) as HTMLSelectElement;
     chosenElement.selectedIndex = this.findArrayIndex(valueT, typeId);
  }
 

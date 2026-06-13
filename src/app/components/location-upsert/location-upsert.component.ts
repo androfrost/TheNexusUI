@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { Location } from '../../models/location';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +16,7 @@ import { IndividualLocationsDto } from '../../models/dto/individual-locations-dt
   styleUrls: ['./location-upsert.component.css'],
   providers: [LocationService]
 })
-export class LocationUpsertComponent {
+export class LocationUpsertComponent implements OnInit {
 
   portal = portal;
 
@@ -82,7 +82,7 @@ export class LocationUpsertComponent {
       });
     else
       if (this.individualId != 0){
-        var upsertIndividualLocation: IndividualLocationsDto = new IndividualLocationsDto();
+        let upsertIndividualLocation: IndividualLocationsDto = new IndividualLocationsDto();
         upsertIndividualLocation.individualId = this.individualId;
         upsertIndividualLocation.locationId = this.upsertLocation.locationId;
         upsertIndividualLocation.location = [this.upsertLocation];
@@ -120,7 +120,7 @@ export class LocationUpsertComponent {
   // Reset values then exit to previous portal
   Cancel(){
     this.Reset();
-    var returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
+    const returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
     this.goToNextPortal.emit(returnPortal);
   }
 }

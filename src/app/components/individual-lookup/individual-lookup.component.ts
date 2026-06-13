@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { portal } from '../../enum/portal';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +14,7 @@ import { Pagination } from '../../helpers/pagination';
   templateUrl: './individual-lookup.component.html',
   styleUrls: ['./individual-lookup.component.css']
 })
-export class IndividualLookupComponent implements OnChanges {
+export class IndividualLookupComponent implements OnInit {
 
   portal = portal;
   portalState: number = 0;
@@ -73,34 +73,13 @@ export class IndividualLookupComponent implements OnChanges {
     this.assignedChangesMap.clear();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // if (changes['lookupDto']) {
-    //   this.currentSortField = undefined;
-    //   this.currentSortOrder = 'asc';
-    //   this.filterSearchLookupList();
-
-    //   // rebuild original assigned map for new input
-    //   this.originalAssignedMap.clear();
-    //   for (const it of this.lookupDto) {
-    //     this.originalAssignedMap.set(it.id, !!it.isAssigned);
-    //   }
-    //   this.assignedChangesMap.clear();
-    // }
-    // if (changes['dropdownDto']) {
-    //   this.secondIds = [];
-    //   for(const item of this.dropdownDto)
-    //     this.secondIds.push(item);
-
-    //   this.secondIds.unshift({id: 0, name: "Choose Option"});
-    // }
-  }
 
   TraversePortal(portalId: number) : void{
     this.goToNextPortal.emit(portalId);
   }
 
   Cancel(){
-    var returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
+    const returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
     this.goToNextPortal.emit(returnPortal);
   } 
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IndividualUpsertComponent } from "../individual-upsert/individual-upsert.component";
 import { portal } from '../../enum/portal';
@@ -228,7 +228,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
 
       if (orderField && currentOrder) {
         this.lookupDtoMain.sort((a, b) => {
-          const compareResult = a[orderField!] > b[orderField!] ? 1 : -1;
+          const compareResult = a[orderField] > b[orderField] ? 1 : -1;
           return currentOrder === 'asc' ? compareResult : -compareResult;
         });
       }
@@ -245,8 +245,8 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
         this.loadingLocation = false;
       } else if (targetPortal === portal.PhoneNumberLookup) {
         // Convert assigned-phone-number DTOs into real PhoneNumber objects for selection and upsert
-        if (result.length && (result[0] as any).phoneNumber) {
-          this.phoneNumbersMain = (result as any[]).map(item => (item.phoneNumber?.[0] ?? new PhoneNumber()) as PhoneNumber);
+        if (result.length && (result[0]).phoneNumber) {
+          this.phoneNumbersMain = (result).map(item => (item.phoneNumber?.[0] ?? new PhoneNumber()) as PhoneNumber);
         } else {
           this.phoneNumbersMain = result as PhoneNumber[];
         }
@@ -259,7 +259,7 @@ export class NexusPortalComponent implements OnInit, OnDestroy {
           const compareResult = a[this.currentSort!.field] > b[this.currentSort!.field] ? 1 : -1;
           return this.currentSort!.order === 'asc' ? compareResult : -compareResult;
         });
-      };
+      }
 
       // trigger change detection if needed
       this.cdr.markForCheck?.();
