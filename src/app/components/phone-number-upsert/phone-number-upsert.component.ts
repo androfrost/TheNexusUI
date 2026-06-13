@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { portal } from '../../enum/portal';
 import { PhoneNumber } from '../../models/phone-number';
 import { PhoneNumberService } from '../../services/phone-number.service';
@@ -17,7 +17,7 @@ import { DataFormatting } from '../../helpers/data-formatting';
   styleUrls: ['./phone-number-upsert.component.css'],
   providers: [PhoneNumberService]
 })
-export class PhoneNumberUpsertComponent {
+export class PhoneNumberUpsertComponent implements OnInit {
   portal = portal;
   
   @Input() upsertPhoneNumber : PhoneNumber = new PhoneNumber();
@@ -87,7 +87,7 @@ export class PhoneNumberUpsertComponent {
       });
     else
       if (this.individualId != 0){
-        var upsertIndividualPhoneNumber: IndividualPhoneNumbersDto = new IndividualPhoneNumbersDto();
+        let upsertIndividualPhoneNumber: IndividualPhoneNumbersDto = new IndividualPhoneNumbersDto();
         upsertIndividualPhoneNumber.individualId = this.individualId;
         upsertIndividualPhoneNumber.phoneNumberId = this.upsertPhoneNumber.phoneNumberId;
         upsertIndividualPhoneNumber.phoneNumber = [this.upsertPhoneNumber];
@@ -122,17 +122,17 @@ export class PhoneNumberUpsertComponent {
   // Reset values then exit to previous portal
   Cancel(){
     this.Reset();
-    var returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
+    const returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
     this.goToNextPortal.emit(returnPortal);
   }
   
   GetChosenPhoneNumber() : void{
-    let chosenPhoneNumber = document.getElementById("drop-pho") as HTMLSelectElement;
+    const chosenPhoneNumber = document.getElementById("drop-pho") as HTMLSelectElement;
     this.phoneNumberTypeOption = chosenPhoneNumber.selectedIndex;
   }
 
   SetChosenPhoneNumber(typeId: number) : void{
-    let chosenPhoneNumber = document.getElementById("drop-pho") as HTMLSelectElement;
+    const chosenPhoneNumber = document.getElementById("drop-pho") as HTMLSelectElement;
     chosenPhoneNumber.selectedIndex = typeId;
   }
   

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output, OnInit } from '@angular/core';
 import { Group } from '../../models/group';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { Navigation } from '../../helpers/navigation';
   styleUrls: ['./group-upsert.component.css'],
   providers: [GroupService]
 })
-export class GroupUpsertComponent {
+export class GroupUpsertComponent implements OnInit {
 
   portal = portal;
 
@@ -82,17 +82,17 @@ export class GroupUpsertComponent {
 
   Cancel(){
     this.Reset();
-    var returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
+    const returnPortal = this.navigation.returnToPreviousPortal(this.allPortalNavigation);
     this.goToNextPortal.emit(returnPortal);
   }
 
   GetChosenGroup() : void{
-    let chosenGroup = document.getElementById("drop-gro") as HTMLSelectElement;
+    const chosenGroup = document.getElementById("drop-gro") as HTMLSelectElement;
     this.groupOption = chosenGroup.selectedIndex;
   }
 
   SetChosenGroup(typeId: number) : void{
-    let chosenGroup = document.getElementById("drop-gro") as HTMLSelectElement;
+    const chosenGroup = document.getElementById("drop-gro") as HTMLSelectElement;
     chosenGroup.selectedIndex = typeId;
   }
 }

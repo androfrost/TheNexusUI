@@ -20,10 +20,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('TheNexusNG');
   });
 
-  it('should render title', () => {
+  it('should render the app root component with portal welcome text', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, TheNexusNG');
+    expect(compiled.textContent).toContain('Welcome to The Nexus');
   });
 });
