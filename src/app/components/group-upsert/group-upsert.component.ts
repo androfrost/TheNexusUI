@@ -6,6 +6,7 @@ import { GroupService } from '../../services/group.service';
 import { HttpClientModule } from '@angular/common/http';
 import { portal } from '../../enum/portal';
 import { Navigation } from '../../helpers/navigation';
+import { FieldValueControl } from '../../helpers/field-value-control';
 
 @Component({
   selector: 'app-group-upsert',
@@ -77,7 +78,7 @@ export class GroupUpsertComponent implements OnInit {
   Reset(){
     this.groupName = "";
     this.groupDescription = "";
-    this.SetChosenGroup(this.groupOption);
+    FieldValueControl.setChosenFieldValueWithArray('drop-gro', this.groupTypes, this.groupOption);
   }
 
   Cancel(){
@@ -86,13 +87,7 @@ export class GroupUpsertComponent implements OnInit {
     this.goToNextPortal.emit(returnPortal);
   }
 
-  GetChosenGroup() : void{
-    const chosenGroup = document.getElementById("drop-gro") as HTMLSelectElement;
-    this.groupOption = chosenGroup.selectedIndex;
-  }
-
-  SetChosenGroup(typeId: number) : void{
-    const chosenGroup = document.getElementById("drop-gro") as HTMLSelectElement;
-    chosenGroup.selectedIndex = typeId;
+  GetChosenFieldValue<T>(element: string, fieldOption: keyof T) : void{
+    (this as any)[fieldOption] = FieldValueControl.getChosenFieldValue(element, fieldOption);
   }
 }

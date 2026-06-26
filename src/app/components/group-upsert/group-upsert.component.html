@@ -19,7 +19,7 @@
             Group Type
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-gro" id="drop-gro" (change)="GetChosenGroup()" [(ngModel)]="groupOption">
+            <select class="drop-gro" id="drop-gro" (change)="GetChosenFieldValue('drop-gro', 'groupOption')" [(ngModel)]="groupOption">
                 <option *ngFor="let group of groupTypes; let i = index" [value]="i">{{ group }}</option>
             </select>
         </div>

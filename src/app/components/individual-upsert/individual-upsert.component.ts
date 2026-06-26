@@ -9,6 +9,7 @@ import { portal } from '../../enum/portal';
 import { DropdownDto } from '../../models/dto/dropdown-dto';
 import { DataFormatting } from '../../helpers/data-formatting';
 import { Navigation } from '../../helpers/navigation';
+import { FieldValueControl } from '../../helpers/field-value-control';
 
 @Component({
   selector: 'app-individual-upsert',
@@ -81,9 +82,9 @@ export class IndividualUpsertComponent implements OnChanges, AfterViewInit, OnIn
     this.statusOption = this.upsertIndividual.statusId;
     this.sexOption = this.upsertIndividual.sexId;
     this.dateOfBirthDate = this.upsertIndividual.dateOfBirth;
-    this.setChosenOption(this.upsertIndividual.groupId, 'groupOption');
-    this.locationOption = this.findArrayIndex(this.locations, this.upsertIndividual.locationId);
-    this.phoneNumberOption = this.findArrayIndex(this.phoneNumbers, this.upsertIndividual.phoneNumberId);
+    this.groupOption = FieldValueControl.setChosenOption(this.upsertIndividual.groupId, 'groupOption', this.groups);
+    this.locationOption = FieldValueControl.findArrayIndex(this.locations, this.upsertIndividual.locationId);
+    this.phoneNumberOption = FieldValueControl.findArrayIndex(this.phoneNumbers, this.upsertIndividual.phoneNumberId);
 
     this.locationLength = this.locationDropdownDto.length;
     this.phoneNumberLength = this.phoneNumberDropdownDto.length;
@@ -103,7 +104,7 @@ ngOnChanges(changes: SimpleChanges): void {
         this.locations.unshift({ id: 0, name: 'Choose Location' });
       }
       this.locationLength = this.locationDropdownDto.length;
-      this.locationOption = this.findArrayIndex(this.locations, this.upsertIndividual.locationId);
+      this.locationOption = FieldValueControl.findArrayIndex(this.locations, this.upsertIndividual.locationId);
     }
 
     if (changes['phoneNumberDropdownDto'] && this.phoneNumberLength !== this.phoneNumberDropdownDto.length) {   //&& this.phoneNumbers.length <= 1) {
@@ -112,7 +113,7 @@ ngOnChanges(changes: SimpleChanges): void {
         this.phoneNumbers.unshift({ id: 0, name: 'Choose Phone Number' });
       }
       this.phoneNumberLength = this.phoneNumberDropdownDto.length;
-      this.phoneNumberOption = this.findArrayIndex(this.phoneNumbers, this.upsertIndividual.phoneNumberId);
+      this.phoneNumberOption = FieldValueControl.findArrayIndex(this.phoneNumbers, this.upsertIndividual.phoneNumberId);
     }
 
     if (changes['individualTypeDropdownDto'] && this.individualTypes.length <= 1) {
@@ -129,8 +130,9 @@ ngOnChanges(changes: SimpleChanges): void {
       // if you have a date string property, set it here (e.g. dateOfBirthString)
       this.dateOfBirthString = DataFormatting.formatForInput(this.upsertIndividual.dateOfBirth);
       // Set individualTypeOption based on id
-      const foundIndex = this.individualTypes.findIndex(t => t.id === this.upsertIndividual.individualTypeId);
-      this.individualTypeOption = foundIndex >= 0 ? foundIndex : 0;
+      // const foundIndex = this.individualTypes.findIndex(t => t.id === this.upsertIndividual.individualTypeId);
+      // this.individualTypeOption = foundIndex >= 0 ? foundIndex : 0;
+      this.individualTypeOption = FieldValueControl.findArrayIndex(this.individualTypes, this.upsertIndividual.individualTypeId);
     }
   }
 
@@ -149,8 +151,8 @@ ngOnChanges(changes: SimpleChanges): void {
     this.upsertIndividual.sexId = this.sexOption;
     this.upsertIndividual.dateOfBirth = this.dateOfBirthDate; 
     this.upsertIndividual.groupId = this.groups[this.groupOption]?.id || 0;
-    this.upsertIndividual.locationId = this.findArrayId(this.locations, this.locationOption);
-    this.upsertIndividual.phoneNumberId = this.findArrayId(this.phoneNumbers, this.phoneNumberOption);
+    this.upsertIndividual.locationId = FieldValueControl.findArrayId(this.locations, this.locationOption);
+    this.upsertIndividual.phoneNumberId = FieldValueControl.findArrayId(this.phoneNumbers, this.phoneNumberOption);
     // Call appropriate service function based on add vs update
     if (this.isUpdate)
       this.individualService.updateIndividual(this.upsertIndividual).subscribe((result: Individual) => (this.upsertIndividual = result));
@@ -169,20 +171,20 @@ ngOnChanges(changes: SimpleChanges): void {
     this.firstName = "";
     this.lastName = "";
     this.individualTypeOption = 0;
-    this.setChosenFieldValue('drop-typ', this.individualTypeOption);
+    FieldValueControl.setChosenFieldValue('drop-typ', this.individualTypeOption);
     this.sexOption = 0;
-    this.setChosenFieldValue('drop-sex', this.sexOption);
+    FieldValueControl.setChosenFieldValue('drop-sex', this.sexOption);
     this.dateOfBirthDate = new Date();
     this.dateOfBirthString = "";
     this.groupOption = 0;
-    this.setChosenOption(this.upsertIndividual.groupId, 'groupOption');
+    this.groupOption = FieldValueControl.setChosenOption(this.upsertIndividual.groupId, 'groupOption', this.groups);
     this.locationOption = 0;
-    this.setChosenFieldValueWithArray('drop-loc', this.locations, this.locationOption);
+    FieldValueControl.setChosenFieldValueWithArray('drop-loc', this.locations, this.locationOption);
     this.phoneNumberOption = 0;
-    this.setChosenFieldValueWithArray('drop-pho', this.phoneNumbers, this.phoneNumberOption);
+    FieldValueControl.setChosenFieldValueWithArray('drop-pho', this.phoneNumbers, this.phoneNumberOption);
     this.description = "";
     this.statusOption = 0;
-    this.setChosenFieldValue('drop-sta', this.statusOption);
+    FieldValueControl.setChosenFieldValue('drop-sta', this.statusOption);
   }
 
   Cancel(){
@@ -193,41 +195,14 @@ ngOnChanges(changes: SimpleChanges): void {
   }
 
   ngAfterViewInit(): void {
-    this.setChosenOption(this.upsertIndividual.groupId, 'groupOption');
+    this.groupOption = FieldValueControl.setChosenOption(this.upsertIndividual.groupId, 'groupOption', this.groups);
   }
 
   getChosenFieldValue(element: string, fieldOption: keyof IndividualUpsertComponent) : void{
-    const chosenElement = document.getElementById(element) as HTMLSelectElement;
-    (this as any)[fieldOption] = chosenElement.selectedIndex;
-  }
-
-  setChosenFieldValue(element: string, typeId: number) : void{
-    const chosenElement = document.getElementById(element) as HTMLSelectElement;
-    chosenElement.selectedIndex = typeId;
-  }
-
-  setChosenFieldValueWithArray<T extends Array<any>>(element: string, valueT: T, typeId: number) : void{
-    const chosenElement = document.getElementById(element) as HTMLSelectElement;
-    chosenElement.selectedIndex = this.findArrayIndex(valueT, typeId);
- }
-
-  setChosenOption(typeId: number, fieldOption: keyof IndividualUpsertComponent) : void{
-    const foundIndex = this.groups.findIndex(f => f.id === typeId);
-    (this as any)[fieldOption] = foundIndex >= 0 ? foundIndex : 0;
+    (this as any)[fieldOption] =  FieldValueControl.getChosenFieldValue(element, fieldOption);
   }
 
   updateDateForSaving(){
     this.dateOfBirthDate = new Date(this.dateOfBirthString);
-  }
-
-  // General function to find id in any array of objects based on index, returns 0 if not found
-  findArrayId<T extends Array<any>>(array: T, index: number) : number{
-    return array[index]?.id || 0;
-  }
-
-  // General function to find index in any array of objects based on id, returns 0 if not found
-  findArrayIndex<T extends Array<any>>(array: T, typeId: number) : number{
-    const foundIndex = array.findIndex(l => l.id === typeId);
-    return foundIndex >= 0 ? foundIndex : 0;
   }
 }
