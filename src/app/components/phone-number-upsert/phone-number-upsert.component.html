@@ -18,7 +18,7 @@
             Phone Type
         </div>
         <div class="col-12 col-sm-6">
-            <select class="drop-pho" id="drop-pho" (change)="GetChosenPhoneNumber()" [(ngModel)]="phoneNumberType">
+            <select class="drop-pho" id="drop-pho" (change)="GetChosenFieldValue('drop-pho', 'phoneNumberType')" [(ngModel)]="phoneNumberType">
                 <option *ngFor="let phoneNumberType of phoneNumberTypes; let i = index" [value]="i">{{ phoneNumberType.display }}</option>
             </select>
         </div>

@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { Navigation } from '../../helpers/navigation';
 import { IndividualPhoneNumbersDto } from '../../models/dto/individual-phone-number-dto';
 import { DataFormatting } from '../../helpers/data-formatting';
+import { FieldValueControl } from '../../helpers/field-value-control';
 
 @Component({
   selector: 'app-phone-number-upsert',
@@ -126,14 +127,8 @@ export class PhoneNumberUpsertComponent implements OnInit {
     this.goToNextPortal.emit(returnPortal);
   }
   
-  GetChosenPhoneNumber() : void{
-    const chosenPhoneNumber = document.getElementById("drop-pho") as HTMLSelectElement;
-    this.phoneNumberTypeOption = chosenPhoneNumber.selectedIndex;
+  GetChosenFieldValue<T>(element: string, fieldOption: keyof T) : void{
+    (this as any)[fieldOption] = FieldValueControl.getChosenFieldValue(element, fieldOption);
   }
-
-  SetChosenPhoneNumber(typeId: number) : void{
-    const chosenPhoneNumber = document.getElementById("drop-pho") as HTMLSelectElement;
-    chosenPhoneNumber.selectedIndex = typeId;
-  }
-  
+ 
 }
